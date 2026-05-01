@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: oklch(13% 0.05 145);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input, select, textarea, button {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Animations ── */
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes recBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.1; }
+}
+
+@keyframes hotPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(255,255,255,0.6); }
+  70%  { box-shadow: 0 0 0 14px rgba(255,255,255,0); }
+  100% { box-shadow: 0 0 0 0   rgba(255,255,255,0); }
+}
+
+@keyframes bubblePulse {
+  0%, 100% { box-shadow: 0 0 0 0  rgba(76,127,5,0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(76,127,5,0); }
+}
+
+/* ── Utility classes ── */
+.screen-enter   { animation: slideIn    0.28s cubic-bezier(0.22,1,0.36,1) both; }
+.rec-blink      { animation: recBlink   1.1s ease-in-out infinite; }
+.hotspot-pulse  { animation: hotPulse   2.2s ease-out infinite; }
+.bubble-ok      { animation: bubblePulse 1.4s ease infinite; }

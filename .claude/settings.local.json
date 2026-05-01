@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:api.anthropic.com)",
+      "WebFetch(domain:claude.ai)",
+      "Bash(curl -s --max-filesize 5000000 \"https://api.anthropic.com/v1/design/h/Qk-DAOA3yM0KtX2WOixQOQ?open_file=AgriCertif-App.html\" -o /tmp/agricertif_design.html)",
+      "Bash(echo \"Exit: $?\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s \"https://api.anthropic.com/v1/design/h/Qk-DAOA3yM0KtX2WOixQOQ\" -o /tmp/agricertif_pkg.bin)",
+      "Bash(curl -v \"https://api.anthropic.com/v1/design/h/Qk-DAOA3yM0KtX2WOixQOQ?open_file=AgriCertif-App.html\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(list\\(d.keys\\(\\)\\)\\)\")",
+      "Bash(python3 -c ' *)",
+      "Bash(security find-internet-password *)",
+      "Bash(security find-generic-password *)",
+      "Bash(python3)",
+      "Bash(npm install *)",
+      "Bash(sudo chmod *)",
+      "Read(//Users/pacomehazouard/.npm/_cacache/content-v2/sha512/99/**)",
+      "Bash(sudo chown *)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(pkill -f \"vite\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(lsof -ti:5173)"
+    ]
+  }
+}
