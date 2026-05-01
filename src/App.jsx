@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { IOSDevice } from './IOSFrame';
+// IOSDevice frame removed — full-screen native app
 import { EQUIPMENT_CATEGORIES, detectRegion } from './data/equipmentData';
 import { getInspectionSections } from './data/inspectionData';
 
@@ -85,7 +85,7 @@ function EtatRow({ current, onChange }) {
 /* ── EN-TÊTE AVEC RETOUR ── */
 function BackHeader({ title, sub, onBack, pct }) {
   return (
-    <div style={{ background: G.dark, flexShrink: 0, paddingTop: 54 }}>
+    <div style={{ background: G.dark, flexShrink: 0, paddingTop: 'max(calc(env(safe-area-inset-top, 0px) + 12px), 16px)' }}>
       <div style={{ padding: '8px 20px 0' }}>
         <button onClick={onBack} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', color: 'rgba(255,255,255,0.7)' }}>
           <Ic n="chevL" s={18} c="rgba(255,255,255,0.7)" />
@@ -456,7 +456,7 @@ function IdScreen({ dbs, onBack, onNext }) {
   /* ── Formulaire identification ── */
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: G.bg, overflow: 'hidden' }}>
-      <div style={{ background: G.dark, flexShrink: 0, paddingTop: 54 }}>
+      <div style={{ background: G.dark, flexShrink: 0, paddingTop: 'max(calc(env(safe-area-inset-top, 0px) + 12px), 16px)' }}>
         <div style={{ padding: '8px 20px 0' }}>
           <button onClick={() => setCategory(null)} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', color: 'rgba(255,255,255,0.7)' }}>
             <Ic n="chevL" s={18} c="rgba(255,255,255,0.7)" />
@@ -915,7 +915,7 @@ function VisiteScreen({ machineInfo, onBack, onNext }) {
   /* ── Tuto 60 FPS (iPhone) ── */
   if (!tutoSeen) return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#0D0D0D', overflow: 'hidden' }}>
-      <div style={{ background: G.dark, padding: '52px 20px 16px', flexShrink: 0 }}>
+      <div style={{ background: G.dark, paddingTop: 'max(calc(env(safe-area-inset-top, 0px) + 12px), 16px)', padding: '0 20px 16px', flexShrink: 0 }}>
         <button onClick={onBack} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)', marginBottom: 10 }}>
           <Ic n="chevL" s={16} c="rgba(255,255,255,0.6)" />
           <span style={{ fontSize: 13, fontWeight: 600 }}>Retour</span>
@@ -1003,7 +1003,7 @@ function VisiteScreen({ machineInfo, onBack, onNext }) {
         </svg>
 
         {/* Header overlay */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '52px 14px 10px', background: 'linear-gradient(rgba(0,0,0,0.6),transparent)' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 'max(calc(env(safe-area-inset-top, 0px) + 12px), 16px)', padding: '0 14px 10px', background: 'linear-gradient(rgba(0,0,0,0.6),transparent)' }}>
           <button onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(8px)', border: 'none', borderRadius: 20, padding: '6px 12px', color: 'rgba(255,255,255,0.85)', cursor: 'pointer' }}>
             <Ic n="chevL" s={14} c="rgba(255,255,255,0.85)" />
             <span style={{ fontSize: 12, fontWeight: 600 }}>Quitter</span>
@@ -1379,7 +1379,7 @@ function ListingScreen({ onBack }) {
                       background: 'linear-gradient(to top,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.1) 45%,transparent 100%)' }} />
 
         {/* Back */}
-        <button onClick={onBack} style={{ position: 'absolute', top: 88, left: 14,
+        <button onClick={onBack} style={{ position: 'absolute', top: 'max(calc(env(safe-area-inset-top, 0px) + 14px), 16px)', left: 14,
           width: 36, height: 36, borderRadius: 18, background: 'rgba(0,0,0,0.48)',
           backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1387,7 +1387,7 @@ function ListingScreen({ onBack }) {
         </button>
 
         {/* Score badge — glassmorphism, légèrement plus haut */}
-        <div style={{ position: 'absolute', top: 78, right: 14,
+        <div style={{ position: 'absolute', top: 'max(calc(env(safe-area-inset-top, 0px) + 10px), 14px)', right: 14,
           background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(16px)',
           borderRadius: 14, padding: '7px 13px',
           border: '1px solid rgba(255,255,255,0.22)',
@@ -1792,7 +1792,7 @@ function HomeScreen({ onNewInspection, onOpenListing }) {
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: G.bg, overflow: 'hidden' }}>
-      <div style={{ background: G.dark, padding: '62px 20px 20px', flexShrink: 0 }}>
+      <div style={{ background: G.dark, paddingTop: 'max(calc(env(safe-area-inset-top, 0px) + 18px), 24px)', padding: '0 20px 20px', flexShrink: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
           <div>
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontWeight: 500, marginBottom: 2 }}>Bonjour,</div>
@@ -1941,20 +1941,6 @@ function HomeScreen({ onNewInspection, onOpenListing }) {
 }
 
 /* ── Scale hook ── */
-const DEVICE_W = 402, DEVICE_H = 874;
-function useDeviceScale() {
-  const [scale, setScale] = useState(1);
-  useEffect(() => {
-    const update = () => {
-      const pad = 24;
-      setScale(Math.min((window.innerWidth - pad * 2) / DEVICE_W, (window.innerHeight - pad * 2) / DEVICE_H, 1));
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-  return scale;
-}
 
 /* ══════════════════════════════════
    APP ROOT
@@ -1967,8 +1953,6 @@ export default function App() {
   const [inspData,   setInspData]   = useState(null);
   const [visData,    setVisData]    = useState(null);
   const [prevScreen, setPrevScreen] = useState('home');
-  const scale = useDeviceScale();
-
   const goListing = () => { setPrevScreen(screen); setScreen('listing'); };
 
   useEffect(() => {
@@ -1980,20 +1964,14 @@ export default function App() {
   const go = s => setScreen(s);
 
   return (
-    <div style={{ width: DEVICE_W * scale, height: DEVICE_H * scale, flexShrink: 0 }}>
-      <div style={{ width: DEVICE_W, height: DEVICE_H, transformOrigin: 'top left', transform: `scale(${scale})` }}>
-        <IOSDevice>
-          <div className="screen-enter" key={screen} style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', position: 'relative' }}>
-            {screen === 'listing'    && <ListingScreen    onBack={() => setScreen(prevScreen)} />}
-            {screen === 'home'       && <HomeScreen       onNewInspection={() => go('client')} onOpenListing={goListing} />}
-            {screen === 'client'     && <ClientScreen     onBack={() => go('home')}       onNext={d => { setClientInfo(d); go('id'); }} />}
-            {screen === 'id'         && <IdScreen         dbs={dbs}                        onBack={() => go('client')} onNext={d => { setMInfo(d); go('inspection'); }} />}
-            {screen === 'inspection' && <InspectionScreen machineInfo={mInfo}              onBack={() => go('id')}     onNext={d => { setInspData(d); go('visite'); }} />}
-            {screen === 'visite'     && <VisiteScreen     machineInfo={mInfo}              onBack={() => go('inspection')} onNext={d => { setVisData(d); go('annonce'); }} />}
-            {screen === 'annonce'    && <AnnonceScreen    machineInfo={mInfo} clientInfo={clientInfo} inspection={inspData} visite={visData} onBack={() => go('visite')} onHome={() => go('home')} />}
-          </div>
-        </IOSDevice>
-      </div>
+    <div className="screen-enter" key={screen} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', position: 'relative' }}>
+      {screen === 'listing'    && <ListingScreen    onBack={() => setScreen(prevScreen)} />}
+      {screen === 'home'       && <HomeScreen       onNewInspection={() => go('client')} onOpenListing={goListing} />}
+      {screen === 'client'     && <ClientScreen     onBack={() => go('home')}       onNext={d => { setClientInfo(d); go('id'); }} />}
+      {screen === 'id'         && <IdScreen         dbs={dbs}                        onBack={() => go('client')} onNext={d => { setMInfo(d); go('inspection'); }} />}
+      {screen === 'inspection' && <InspectionScreen machineInfo={mInfo}              onBack={() => go('id')}     onNext={d => { setInspData(d); go('visite'); }} />}
+      {screen === 'visite'     && <VisiteScreen     machineInfo={mInfo}              onBack={() => go('inspection')} onNext={d => { setVisData(d); go('annonce'); }} />}
+      {screen === 'annonce'    && <AnnonceScreen    machineInfo={mInfo} clientInfo={clientInfo} inspection={inspData} visite={visData} onBack={() => go('visite')} onHome={() => go('home')} />}
     </div>
   );
 }

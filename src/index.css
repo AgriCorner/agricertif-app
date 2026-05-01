@@ -4,18 +4,17 @@
 
 body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: oklch(13% 0.05 145);
-  height: 100vh;
+  background: #F7F5EF;
+  height: 100dvh;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 #root {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 input, select, textarea, button {

@@ -21,7 +21,19 @@
       "Bash(curl -s http://localhost:5173)",
       "Bash(pkill -f \"vite\")",
       "mcp__Claude_Preview__preview_start",
-      "Bash(lsof -ti:5173)"
+      "Bash(lsof -ti:5173)",
+      "Read(//Users/pacomehazouard/.ssh/**)",
+      "Bash(ssh -i ~/.ssh/id_ed25519 -T git@github.com)",
+      "Bash(git config *)",
+      "Bash(curl -s -H 'Authorization: token __TRACKED_VAR__' https://api.github.com/user)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('login:', d.get\\('login'\\), '| name:', d.get\\('name'\\)\\)\")",
+      "Bash(/tmp/gh_install/gh_2.70.0_macOS_arm64/bin/gh repo *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(/tmp/gh_install/gh_2.70.0_macOS_arm64/bin/gh api *)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('build_type:', d.get\\('build_type'\\), '| status:', d.get\\('status'\\)\\)\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(/tmp/gh_install/gh_2.70.0_macOS_arm64/bin/gh run *)"
     ]
   }
 }
