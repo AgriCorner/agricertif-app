@@ -3,6 +3,9 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { EQUIPMENT_CATEGORIES, detectRegion } from './data/equipmentData';
 import { getInspectionSections } from './data/inspectionData';
 
+/* ── BASE URL (GitHub Pages /agricertif-app/ en prod, / en dev) ── */
+const BASE = import.meta.env.BASE_URL;
+
 /* ── COULEURS ── */
 const G = {
   primary: '#4C7F05', dark: '#104410', light: '#6BA32E',
@@ -1181,14 +1184,14 @@ function AnnonceScreen({ machineInfo, clientInfo, inspection, visite, onBack, on
 
           {/* Photo hero */}
           <div style={{ position: 'relative', height: 195 }}>
-            <img src="/tractor-jd6530.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={`${BASE}tractor-jd6530.jpg`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.1) 55%,transparent 100%)' }} />
             <div style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(16,68,16,0.88)', backdropFilter: 'blur(10px)', borderRadius: 10, padding: '6px 12px', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.55)', fontWeight: 600, letterSpacing: 0.8, textTransform: 'uppercase' }}>Score AgriCertif</div>
               <div style={{ fontSize: 24, fontWeight: 900, color: 'white', letterSpacing: '-0.5px' }}>{score}<span style={{ fontSize: 13, fontWeight: 600 }}>/100</span></div>
             </div>
             <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(255,255,255,0.95)', borderRadius: 10, padding: '6px 10px' }}>
-              <img src="/logo-agricertif.svg" alt="" style={{ height: 18, display: 'block' }} />
+              <img src={`${BASE}logo-agricertif.svg`} alt="" style={{ height: 18, display: 'block' }} />
             </div>
             <div style={{ position: 'absolute', bottom: 14, left: 16, right: 16 }}>
               <div style={{ fontSize: 17, fontWeight: 900, color: 'white', letterSpacing: '-0.3px' }}>{machineInfo?.brand} {m.modele || machineInfo?.modelQ || '—'}</div>
@@ -1559,7 +1562,7 @@ function ListingScreen({ onBack }) {
                         background: `linear-gradient(135deg,${G.dark} 0%,#2A6B2A 100%)`,
                         borderRadius: 16, overflow: 'hidden', position: 'relative',
                         boxShadow: '0 6px 24px rgba(16,68,16,0.25)' }}>
-            <img src="/jd6530-side.png" alt=""
+            <img src={`${BASE}jd6530-side.png`} alt=""
                  style={{ width: '100%', height: 110, objectFit: 'cover', opacity: 0.25, display: 'block' }} />
             <div style={{ position: 'absolute', inset: 0, display: 'flex',
                           alignItems: 'center', gap: 16, padding: '0 20px' }}>
@@ -1761,7 +1764,7 @@ function ListingScreen({ onBack }) {
               Je recommande ce tracteur sans réserve pour une utilisation grandes cultures ou polyculture-élevage."
             </div>
             <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <img src="/pacome.jpg" alt="" style={{ width: 28, height: 28, borderRadius: 9,
+              <img src={`${BASE}pacome.jpg`} alt="" style={{ width: 28, height: 28, borderRadius: 9,
                 objectFit: 'cover', border: '1.5px solid rgba(107,163,46,0.5)' }} />
               <div>
                 <div style={{ fontSize: 11, fontWeight: 700, color: 'white' }}>Pacôme HAZOUARD</div>
@@ -1801,7 +1804,7 @@ function ListingScreen({ onBack }) {
             Votre inspecteur
           </div>
           <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 14 }}>
-            <img src="/pacome.jpg" alt="Pacôme HAZOUARD"
+            <img src={`${BASE}pacome.jpg`} alt="Pacôme HAZOUARD"
                  style={{ width: 58, height: 58, borderRadius: 16, objectFit: 'cover',
                            border: '2px solid rgba(107,163,46,0.5)', flexShrink: 0 }} />
             <div>
@@ -1858,17 +1861,17 @@ function VentesTab({ onOpenListing }) {
   const actives = [
     { m: 'John Deere 6530 Premium', cat: 'Tracteur', ann: 2008, h: '6 532 h', score: 87,
       prix: '49 000 €', vues: 312, contacts: 8, jours: 14,
-      fourch: { bas: 40000, haut: 53000, annonce: 49000 }, img: '/jd6530-side.png' },
+      fourch: { bas: 40000, haut: 53000, annonce: 49000 }, img: `${BASE}jd6530-side.png` },
   ];
   const concession = [
     { m: 'New Holland T6.180', cat: 'Tracteur', ann: 2017, h: '3 820 h', score: 91,
-      prix: '62 000 €', agent: 'Marc D.', jours: 7, img: '/tractor-jd6530p.png' },
+      prix: '62 000 €', agent: 'Marc D.', jours: 7, img: `${BASE}tractor-jd6530p.png` },
     { m: 'Claas Axion 850', cat: 'Tracteur', ann: 2015, h: '5 100 h', score: 78,
-      prix: '55 500 €', agent: 'Sophie R.', jours: 21, img: '/tractor-jd6210r.jpg' },
+      prix: '55 500 €', agent: 'Sophie R.', jours: 21, img: `${BASE}tractor-jd6210r.jpg` },
   ];
   const archives = [
     { m: 'John Deere 6630 Premium', cat: 'Tracteur', ann: 2010, h: '7 210 h', score: 82,
-      annonce: 43500, vendu: 41000, jours: 22, date: 'Nov. 2025', img: '/jd6530-side.png' },
+      annonce: 43500, vendu: 41000, jours: 22, date: 'Nov. 2025', img: `${BASE}jd6530-side.png` },
   ];
   const tabs2 = [
     { id: 'mes', l: 'Mes annonces' },
@@ -2082,7 +2085,7 @@ function HomeScreen({ onNewInspection, onOpenListing }) {
             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontWeight: 500, marginBottom: 2 }}>Bonjour,</div>
             <div style={{ fontSize: 20, fontWeight: 800, color: 'white', letterSpacing: '-0.3px' }}>Pacôme HAZOUARD</div>
           </div>
-          <img src="/logo-agricertif.svg" alt="AgriCertif" style={{ height: 26, filter: 'brightness(0) invert(1)', opacity: 0.65 }} />
+          <img src={`${BASE}logo-agricertif.svg`} alt="AgriCertif" style={{ height: 26, filter: 'brightness(0) invert(1)', opacity: 0.65 }} />
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {[['1', 'Inspections'], ['1', 'Inspectés'], ['0', 'En cours']].map(([v, l]) => (
@@ -2107,7 +2110,7 @@ function HomeScreen({ onNewInspection, onOpenListing }) {
             {recents.map(r => (
               <div key={r.m} onClick={() => r.listing && onOpenListing()} style={{ background: 'white', borderRadius: 14, padding: '13px 15px', marginBottom: 9, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 1px 6px rgba(0,0,0,0.05)', cursor: r.listing ? 'pointer' : 'default' }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, overflow: 'hidden', flexShrink: 0 }}>
-                  <img src="/jd6530-side.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={`${BASE}jd6530-side.png`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.m}</div>
@@ -2126,7 +2129,7 @@ function HomeScreen({ onNewInspection, onOpenListing }) {
             {/* Catégorie Tracteurs */}
             <div style={{ fontSize: 10, fontWeight: 700, color: G.muted, textTransform: 'uppercase', letterSpacing: 1.8, marginBottom: 10, marginLeft: 2 }}>Tracteurs</div>
             {[
-              { m: 'John Deere 6530 Premium', cat: 'Tracteur', ann: 2008, h: '6 532 h', score: 87, cert: true, pct: 100, annoncé: '49 000 €', img: '/jd6530-side.png' },
+              { m: 'John Deere 6530 Premium', cat: 'Tracteur', ann: 2008, h: '6 532 h', score: 87, cert: true, pct: 100, annoncé: '49 000 €', img: `${BASE}jd6530-side.png` },
             ].map(p => (
               <div key={p.m} onClick={() => onOpenListing()}
                    style={{ background: 'white', borderRadius: 16, marginBottom: 10,
@@ -2178,7 +2181,7 @@ function HomeScreen({ onNewInspection, onOpenListing }) {
                           borderRadius: 18, padding: '20px 18px 18px', marginBottom: 16,
                           boxShadow: '0 6px 24px rgba(16,68,16,0.22)' }}>
               <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 14 }}>
-                <img src="/pacome.jpg" alt="Pacôme HAZOUARD"
+                <img src={`${BASE}pacome.jpg`} alt="Pacôme HAZOUARD"
                      style={{ width: 64, height: 64, borderRadius: 18, objectFit: 'cover',
                                border: '2.5px solid rgba(107,163,46,0.5)', flexShrink: 0 }} />
                 <div>
