@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
@@ -69,5 +69,5 @@ export default defineConfig({
       },
     }),
   ],
-  base: '/agricertif-app/',
-});
+  base: command === 'build' ? '/agricertif-app/' : '/',
+}));

@@ -40,7 +40,25 @@ const Ic = ({ n, s = 20, c = 'currentColor', style = {} }) => {
     mail:    <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke={c} strokeWidth="1.7" fill="none"/><polyline points="22,6 12,13 2,6" stroke={c} strokeWidth="1.7" fill="none"/></>,
     pin:     <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke={c} strokeWidth="1.7" fill="none"/><circle cx="12" cy="10" r="3" stroke={c} strokeWidth="1.7" fill="none"/></>,
     /* Equipment category icons — agricultural silhouettes */
-    tractor: <><circle cx="7" cy="17" r="4.5" stroke={c} strokeWidth="1.7" fill="none"/><circle cx="18.5" cy="18" r="2.5" stroke={c} strokeWidth="1.7" fill="none"/><path d="M11.5 17V11.5h2.5l4 5V17" stroke={c} strokeWidth="1.7" fill="none" strokeLinecap="round" strokeLinejoin="round"/><rect x="7" y="7" width="4.5" height="4.5" rx="1" stroke={c} strokeWidth="1.5" fill="none"/><line x1="9.5" y1="7" x2="9.5" y2="5.5" stroke={c} strokeWidth="1.5" strokeLinecap="round"/></>,
+    tractor: <>
+      {/* Grande roue AR + moyeu */}
+      <circle cx="6" cy="17.5" r="5.5" stroke={c} strokeWidth="2" fill="none"/>
+      <circle cx="6" cy="17.5" r="2"   stroke={c} strokeWidth="2" fill="none"/>
+      {/* Corps : cabine (dos + toit + pare-brise) + capot + pilier avant — path unique sans doublon */}
+      <path d="M9 17 L9 4 L16 4 L16 11 L21 11 L21 17"
+            stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* Châssis bas entre les deux roues */}
+      <line x1="11.5" y1="17" x2="18.5" y2="17" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+      {/* Vitre cabine — rectangle intérieur, décalé des bords */}
+      <rect x="10" y="5" width="3.8" height="3.8" rx="0.5"
+            stroke={c} strokeWidth="1.4" fill="none"/>
+      {/* Tuyau d'échappement : sort du capot et crochète vers la droite */}
+      <path d="M17 11 L17 6 Q17 4.5 19 4.5"
+            stroke={c} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      {/* Petite roue AV + moyeu */}
+      <circle cx="19.5" cy="19.5" r="2.5" stroke={c} strokeWidth="2" fill="none"/>
+      <circle cx="19.5" cy="19.5" r="1"   stroke={c} strokeWidth="2" fill="none"/>
+    </>,
     wheat:   <><line x1="12" y1="22" x2="12" y2="9" stroke={c} strokeWidth="1.7" strokeLinecap="round"/><path d="M12 9c-1-3-5-4-5-7 0 3 4 5 5 7z" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round"/><path d="M12 9c1-3 5-4 5-7 0 3-4 5-5 7z" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round"/><path d="M12 14c-1-2-4-2-4-4 0 2 3 3 4 4z" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round"/><path d="M12 14c1-2 4-2 4-4 0 2-3 3-4 4z" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round"/><path d="M12 19c-1-2-3-2-3-4 0 2 2 3 3 4z" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round"/><path d="M12 19c1-2 3-2 3-4 0 2-2 3-3 4z" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round"/></>,
     harrow:  <><rect x="2" y="4" width="20" height="4" rx="1" stroke={c} strokeWidth="1.6" fill="none"/><path d="M5 8v7l2 4M9 8v8l2 3M13 8v8l2 3M17 8v7l2 4" stroke={c} strokeWidth="1.5" strokeLinecap="round"/><line x1="2" y1="21" x2="22" y2="21" stroke={c} strokeWidth="1.3" strokeLinecap="round"/></>,
     seeder:  <><rect x="2" y="3" width="20" height="5" rx="1" stroke={c} strokeWidth="1.6" fill="none"/><path d="M6 8v5M10 8v4M14 8v5M18 8v4" stroke={c} strokeWidth="1.5" strokeLinecap="round"/><circle cx="6" cy="15" r="1.5" fill={c}/><circle cx="10" cy="14" r="1.5" fill={c}/><circle cx="14" cy="15" r="1.5" fill={c}/><circle cx="18" cy="14" r="1.5" fill={c}/><line x1="2" y1="19" x2="22" y2="19" stroke={c} strokeWidth="1.3" strokeLinecap="round"/></>,
@@ -55,6 +73,7 @@ const Ic = ({ n, s = 20, c = 'currentColor', style = {} }) => {
     roll:    <><ellipse cx="12" cy="12" rx="9" ry="5" stroke={c} strokeWidth="1.7" fill="none"/><line x1="3" y1="12" x2="3" y2="17" stroke={c} strokeWidth="1.7"/><line x1="21" y1="12" x2="21" y2="17" stroke={c} strokeWidth="1.7"/><ellipse cx="12" cy="17" rx="9" ry="5" stroke={c} strokeWidth="1.7" fill="none"/></>,
     spray:   <><path d="M3 7h5v12H3z" stroke={c} strokeWidth="1.7" fill="none" strokeLinejoin="round"/><path d="M8 11h4" stroke={c} strokeWidth="1.7" strokeLinecap="round"/><circle cx="16" cy="8" r="1.2" fill={c}/><circle cx="19" cy="11" r="1.2" fill={c}/><circle cx="16" cy="14" r="1.2" fill={c}/><circle cx="13" cy="7" r="1.2" fill={c}/><circle cx="13" cy="15" r="1.2" fill={c}/></>,
     lift:    <><path d="M4 21V9l6-6h10v18H4z" stroke={c} strokeWidth="1.7" fill="none" strokeLinejoin="round"/><path d="M10 3v6H4" stroke={c} strokeWidth="1.7" fill="none"/><rect x="7" y="14" width="6" height="7" stroke={c} strokeWidth="1.5" fill="none"/></>,
+    tag:     <><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" stroke={c} strokeWidth="1.7" fill="none" strokeLinejoin="round"/><circle cx="7" cy="7" r="1.5" fill={c}/></>,
   };
   return <svg width={s} height={s} viewBox="0 0 24 24" style={style}>{paths[n] || null}</svg>;
 };
@@ -1182,7 +1201,7 @@ function AnnonceScreen({ machineInfo, clientInfo, inspection, visite, onBack, on
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
               <div>
                 <div style={{ fontSize: 33, fontWeight: 900, color: G.dark, letterSpacing: '-1px' }}>{price.toLocaleString('fr-FR')} €</div>
-                <div style={{ fontSize: 12, color: G.muted }}>prix estimé</div>
+                <div style={{ fontSize: 12, color: G.muted }}>prix recommandé</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1A1A' }}>{clientName}</div>
@@ -1192,6 +1211,53 @@ function AnnonceScreen({ machineInfo, clientInfo, inspection, visite, onBack, on
                     {clientInfo.region.label}
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── AIDE TARIFICATION — INTERNE COMMERCIAL ── */}
+          <div style={{ margin: '0', borderBottom: `1px solid ${G.border}`,
+                        background: 'linear-gradient(135deg,#F0F7E8 0%,#FEF9F0 100%)' }}>
+            <div style={{ padding: '12px 18px 0', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 6, height: 6, borderRadius: 3, background: G.gold }} />
+              <div style={{ fontSize: 9, fontWeight: 800, color: G.gold, textTransform: 'uppercase', letterSpacing: 1.6 }}>
+                Aide à la tarification — usage interne
+              </div>
+            </div>
+            <div style={{ padding: '10px 18px 14px' }}>
+              {/* Fourchette */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+                <div style={{ background: '#FBF0E7', borderRadius: 12, padding: '10px 12px', border: '1px solid #F5D9B8' }}>
+                  <div style={{ fontSize: 8, fontWeight: 700, color: G.orange, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>↓ Tranche basse</div>
+                  <div style={{ fontSize: 19, fontWeight: 900, color: '#8B4A0A' }}>{Math.round(price * 0.82 / 500) * 500 < price ? (Math.round(price * 0.82 / 500) * 500).toLocaleString('fr-FR') : (price - 5000).toLocaleString('fr-FR')} €</div>
+                  <div style={{ fontSize: 9, color: G.muted, marginTop: 2 }}>Score ≤ 65 · état moyen</div>
+                </div>
+                <div style={{ background: '#EBF4E1', borderRadius: 12, padding: '10px 12px', border: '1px solid #C8E6A0' }}>
+                  <div style={{ fontSize: 8, fontWeight: 700, color: G.primary, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 3 }}>↑ Tranche haute</div>
+                  <div style={{ fontSize: 19, fontWeight: 900, color: G.dark }}>{Math.round(price * 1.08 / 500) * 500 > price ? (Math.round(price * 1.08 / 500) * 500).toLocaleString('fr-FR') : (price + 4000).toLocaleString('fr-FR')} €</div>
+                  <div style={{ fontSize: 9, color: G.muted, marginTop: 2 }}>Score ≥ 85 · état excellent</div>
+                </div>
+              </div>
+              {/* Curseur */}
+              <div style={{ height: 6, background: '#E5E7EB', borderRadius: 99, position: 'relative', marginBottom: 6 }}>
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right,#FBF0E7,#EBF4E1)', borderRadius: 99 }} />
+                <div style={{ position: 'absolute', left: `${Math.min(90, Math.max(10, (score - 55) / 45 * 100))}%`,
+                              top: -4, width: 14, height: 14, borderRadius: 7,
+                              background: G.dark, border: '2.5px solid white',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.3)', transform: 'translateX(-50%)' }} />
+              </div>
+              <div style={{ fontSize: 10, color: G.muted, textAlign: 'center', marginBottom: 8 }}>
+                Score {score}/100 → prix recommandé <strong style={{ color: G.dark }}>{price.toLocaleString('fr-FR')} €</strong>
+              </div>
+              {/* Conseil */}
+              <div style={{ background: 'rgba(255,255,255,0.7)', borderRadius: 10, padding: '8px 12px',
+                            border: `1px solid ${G.border}`, fontSize: 10, color: G.muted, lineHeight: 1.55 }}>
+                💡 {score >= 80
+                  ? `Matériel en excellent état (${score}/100). Vous pouvez vous positionner en tranche haute sans perdre en attractivité.`
+                  : score >= 65
+                  ? `Bon état général (${score}/100). Prix de milieu de fourchette recommandé pour une vente rapide.`
+                  : `État correct mais à surveiller (${score}/100). Tranche basse conseillée pour maximiser les contacts.`
+                }
               </div>
             </div>
           </div>
@@ -1507,10 +1573,16 @@ function ListingScreen({ onBack }) {
                 </svg>
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: 'white', letterSpacing: '-0.2px' }}>
-                  Visite virtuelle 360°
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: 'white', letterSpacing: '-0.2px' }}>
+                    Visite virtuelle 360°
+                  </div>
+                  <div style={{ padding: '2px 8px', borderRadius: 20, fontSize: 9, fontWeight: 700,
+                                background: '#EBF4E1', color: G.primary }}>
+                    ✓ Terminée
+                  </div>
                 </div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>
                   Explorez chaque détail du tracteur
                 </div>
               </div>
@@ -1780,8 +1852,220 @@ function ListingScreen({ onBack }) {
 /* ══════════════════════════════════
    ACCUEIL
 ══════════════════════════════════ */
+function VentesTab({ onOpenListing }) {
+  const [section, setSection] = useState('mes');
+  const scoreColor = s => s >= 80 ? G.primary : s >= 60 ? G.gold : G.red;
+  const actives = [
+    { m: 'John Deere 6530 Premium', cat: 'Tracteur', ann: 2008, h: '6 532 h', score: 87,
+      prix: '49 000 €', vues: 312, contacts: 8, jours: 14,
+      fourch: { bas: 40000, haut: 53000, annonce: 49000 }, img: '/jd6530-side.png' },
+  ];
+  const concession = [
+    { m: 'New Holland T6.180', cat: 'Tracteur', ann: 2017, h: '3 820 h', score: 91,
+      prix: '62 000 €', agent: 'Marc D.', jours: 7, img: '/tractor-jd6530p.png' },
+    { m: 'Claas Axion 850', cat: 'Tracteur', ann: 2015, h: '5 100 h', score: 78,
+      prix: '55 500 €', agent: 'Sophie R.', jours: 21, img: '/tractor-jd6210r.jpg' },
+  ];
+  const archives = [
+    { m: 'John Deere 6630 Premium', cat: 'Tracteur', ann: 2010, h: '7 210 h', score: 82,
+      annonce: 43500, vendu: 41000, jours: 22, date: 'Nov. 2025', img: '/jd6530-side.png' },
+  ];
+  const tabs2 = [
+    { id: 'mes', l: 'Mes annonces' },
+    { id: 'concess', l: 'Concession' },
+    { id: 'archives', l: 'Archives' },
+  ];
+  const fmt = v => v.toLocaleString('fr-FR') + ' €';
+  return (
+    <div>
+      {/* Sous-nav */}
+      <div style={{ display: 'flex', borderBottom: `1px solid ${G.border}`, background: 'white', paddingTop: 4 }}>
+        {tabs2.map(t => (
+          <button key={t.id} onClick={() => setSection(t.id)}
+                  style={{ flex: 1, padding: '10px 4px', border: 'none', background: 'none',
+                           cursor: 'pointer', fontSize: 11, fontWeight: 700,
+                           color: section === t.id ? G.dark : G.muted,
+                           borderBottom: `2.5px solid ${section === t.id ? G.primary : 'transparent'}`,
+                           transition: 'all 0.2s' }}>
+            {t.l}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding: '16px 16px' }}>
+        {/* ── MES ANNONCES ── */}
+        {section === 'mes' && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
+              {[
+                { v: '1', l: 'En ligne', c: G.primary, bg: '#EBF4E1' },
+                { v: '14 j', l: 'Jours en ligne', c: G.dark, bg: 'white' },
+                { v: '8', l: 'Contacts reçus', c: G.gold, bg: '#FDF8ED' },
+              ].map(k => (
+                <div key={k.l} style={{ background: k.bg, borderRadius: 12, padding: '11px 8px',
+                                       textAlign: 'center', border: `1px solid ${G.border}`,
+                                       boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: k.c }}>{k.v}</div>
+                  <div style={{ fontSize: 9, fontWeight: 600, color: G.muted, marginTop: 1, lineHeight: 1.3 }}>{k.l}</div>
+                </div>
+              ))}
+            </div>
+            {actives.map(a => (
+              <div key={a.m} style={{ background: 'white', borderRadius: 16, overflow: 'hidden',
+                                     boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+                                     border: `1px solid ${G.border}`, marginBottom: 12 }}>
+                <div onClick={() => onOpenListing()}
+                     style={{ display: 'flex', gap: 12, padding: '13px 15px', cursor: 'pointer', alignItems: 'center' }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 12, overflow: 'hidden', flexShrink: 0 }}>
+                    <img src={a.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>{a.m}</div>
+                    <div style={{ fontSize: 11, color: G.muted, marginTop: 1 }}>{a.ann} · {a.h} · {a.cat}</div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: G.dark }}>{a.prix}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: G.gold, marginTop: 2 }}>{a.contacts} contacts</div>
+                    <div style={{ fontSize: 9, color: G.muted, marginTop: 1 }}>Score {a.score}/100</div>
+                  </div>
+                </div>
+                <div style={{ borderTop: `1px solid ${G.border}`, display: 'flex', background: G.bg }}>
+                  {[{ l: 'Vues', v: a.vues }, { l: 'Contacts', v: a.contacts }, { l: 'Jours en ligne', v: a.jours }].map((s, i) => (
+                    <div key={s.l} style={{ flex: 1, textAlign: 'center', padding: '9px 4px', borderRight: `1px solid ${G.border}` }}>
+                      <div style={{ fontSize: 16, fontWeight: 900, color: G.dark }}>{s.v}</div>
+                      <div style={{ fontSize: 9, color: G.muted, fontWeight: 500 }}>{s.l}</div>
+                    </div>
+                  ))}
+                  <div style={{ flex: 1, textAlign: 'center', padding: '9px 4px' }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: G.primary }}>✓ Positionné</div>
+                    <div style={{ fontSize: 9, color: G.muted }}>vs marché</div>
+                  </div>
+                </div>
+                <div style={{ padding: '12px 15px', borderTop: `1px solid ${G.border}` }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: G.muted, textTransform: 'uppercase', letterSpacing: 1.4, marginBottom: 8 }}>
+                    Fourchette marché · {a.cat}
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                    <div style={{ flex: 1, background: '#FBF0E7', borderRadius: 10, padding: '8px 10px', border: '1px solid #F5D9B8' }}>
+                      <div style={{ fontSize: 8, fontWeight: 700, color: G.orange, textTransform: 'uppercase', letterSpacing: 1 }}>↓ Basse</div>
+                      <div style={{ fontSize: 15, fontWeight: 900, color: '#8B4A0A' }}>{a.fourch.bas / 1000} k€</div>
+                    </div>
+                    <div style={{ flex: 1, background: '#EBF4E1', borderRadius: 10, padding: '8px 10px', border: '1px solid #C8E6A0' }}>
+                      <div style={{ fontSize: 8, fontWeight: 700, color: G.primary, textTransform: 'uppercase', letterSpacing: 1 }}>↑ Haute</div>
+                      <div style={{ fontSize: 15, fontWeight: 900, color: G.dark }}>{a.fourch.haut / 1000} k€</div>
+                    </div>
+                  </div>
+                  <div style={{ height: 6, background: '#E5E7EB', borderRadius: 99, overflow: 'visible', position: 'relative', marginBottom: 6 }}>
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right,#FBF0E7,#EBF4E1)', borderRadius: 99 }} />
+                    <div style={{ position: 'absolute',
+                                  left: `${((a.fourch.annonce - a.fourch.bas) / (a.fourch.haut - a.fourch.bas)) * 100}%`,
+                                  top: -4, width: 14, height: 14, borderRadius: 7,
+                                  background: G.dark, border: '2.5px solid white',
+                                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)', transform: 'translateX(-50%)' }} />
+                  </div>
+                  <div style={{ fontSize: 10, color: G.muted, textAlign: 'center' }}>
+                    Votre prix <strong style={{ color: G.dark }}>{a.prix}</strong> — bien positionné
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── CONCESSION ── */}
+        {section === 'concess' && (
+          <div>
+            <div style={{ background: '#EBF4E1', borderRadius: 12, padding: '10px 14px',
+                          marginBottom: 14, border: `1px solid #C8E6A0`, fontSize: 11, color: G.muted, lineHeight: 1.5 }}>
+              👁 Lecture seule — annonces en ligne AgriCorner
+            </div>
+            {concession.map(c => (
+              <div key={c.m} style={{ background: 'white', borderRadius: 16, overflow: 'hidden',
+                                     boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+                                     border: `1px solid ${G.border}`, marginBottom: 10 }}>
+                <div style={{ display: 'flex', gap: 12, padding: '13px 15px', alignItems: 'center' }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 12, overflow: 'hidden', flexShrink: 0, background: G.bg }}>
+                    <img src={c.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>{c.m}</div>
+                    <div style={{ fontSize: 11, color: G.muted, marginTop: 1 }}>{c.ann} · {c.h}</div>
+                    <div style={{ fontSize: 10, color: G.muted, marginTop: 2 }}>
+                      <span style={{ fontWeight: 600, color: G.primary }}>AgriCorner</span> · {c.agent}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: G.dark }}>{c.prix}</div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: scoreColor(c.score), marginTop: 2 }}>Score {c.score}/100</div>
+                    <div style={{ fontSize: 9, color: G.muted, marginTop: 1 }}>{c.jours} j en ligne</div>
+                  </div>
+                </div>
+                <div style={{ borderTop: `1px solid ${G.border}`, padding: '8px 15px',
+                              background: G.bg, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 6, height: 6, borderRadius: 3, background: G.primary }} />
+                  <div style={{ fontSize: 10, color: G.muted }}>Inspection AgriCertif complète</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── ARCHIVES ── */}
+        {section === 'archives' && (
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: G.muted, textTransform: 'uppercase',
+                          letterSpacing: 1.8, marginBottom: 12 }}>Historique des ventes</div>
+            {archives.map(a => (
+              <div key={a.m} style={{ background: 'white', borderRadius: 16, overflow: 'hidden',
+                                     boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+                                     border: `1px solid ${G.border}`, marginBottom: 10 }}>
+                <div style={{ display: 'flex', gap: 12, padding: '13px 15px', alignItems: 'center' }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 12, overflow: 'hidden', flexShrink: 0 }}>
+                    <img src={a.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(0.3)' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>{a.m}</div>
+                    <div style={{ fontSize: 11, color: G.muted, marginTop: 1 }}>{a.ann} · {a.h} · {a.cat}</div>
+                    <div style={{ fontSize: 10, color: G.muted, marginTop: 2 }}>Vendu en {a.jours} j · {a.date}</div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: 9, color: G.muted, fontWeight: 500 }}>Annoncé</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#AAA', textDecoration: 'line-through' }}>{fmt(a.annonce)}</div>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: G.dark }}>{fmt(a.vendu)}</div>
+                    <div style={{ fontSize: 9, color: G.primary, fontWeight: 600 }}>Prix vendu</div>
+                  </div>
+                </div>
+                <div style={{ borderTop: `1px solid ${G.border}`, display: 'flex', background: G.bg }}>
+                  {[
+                    { l: 'Score', v: `${a.score}/100` },
+                    { l: 'Durée vente', v: `${a.jours} j` },
+                    { l: 'Écart', v: `- ${((a.annonce - a.vendu) / 1000).toFixed(1)} k€` },
+                  ].map((s, i) => (
+                    <div key={s.l} style={{ flex: 1, textAlign: 'center', padding: '9px 4px',
+                                           borderRight: i < 2 ? `1px solid ${G.border}` : 'none' }}>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: G.dark }}>{s.v}</div>
+                      <div style={{ fontSize: 8, color: G.muted, fontWeight: 500 }}>{s.l}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ padding: '10px 15px', borderTop: `1px solid ${G.border}`, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {['✓ Inspection', '✓ Fiche technique', '✓ Visite 360°'].map(d => (
+                    <div key={d} style={{ padding: '3px 9px', background: '#EBF4E1', borderRadius: 20, fontSize: 9, fontWeight: 700, color: G.primary }}>
+                      {d}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function HomeScreen({ onNewInspection, onOpenListing }) {
-  const [tab, setTab] = useState('home');
+  const [tab, setTab] = useState('parc');
   const recents = [
     { m: 'John Deere 6530 Premium', ann: '2008', h: '6 532 h', s: 'Publié', score: 87, listing: true },
   ];
@@ -1838,26 +2122,55 @@ function HomeScreen({ onNewInspection, onOpenListing }) {
           </div>
         )}
         {tab === 'parc' && (
-          <div style={{ padding: '18px 20px' }}>
-            <div style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A', marginBottom: 16 }}>Mon parc</div>
-            {parc.map(p => (
-              <div key={p.m} onClick={() => onOpenListing()} style={{ background: 'white', borderRadius: 14, padding: '14px 15px', marginBottom: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.05)', cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 46, height: 46, borderRadius: 13, overflow: 'hidden', flexShrink: 0 }}>
-                    <img src="/jd6530-side.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ padding: '16px 16px' }}>
+            {/* Catégorie Tracteurs */}
+            <div style={{ fontSize: 10, fontWeight: 700, color: G.muted, textTransform: 'uppercase', letterSpacing: 1.8, marginBottom: 10, marginLeft: 2 }}>Tracteurs</div>
+            {[
+              { m: 'John Deere 6530 Premium', cat: 'Tracteur', ann: 2008, h: '6 532 h', score: 87, cert: true, pct: 100, annoncé: '49 000 €', img: '/jd6530-side.png' },
+            ].map(p => (
+              <div key={p.m} onClick={() => onOpenListing()}
+                   style={{ background: 'white', borderRadius: 16, marginBottom: 10,
+                             boxShadow: '0 1px 8px rgba(0,0,0,0.06)', cursor: 'pointer',
+                             border: `1px solid ${G.border}`, overflow: 'hidden' }}>
+                {/* Header card */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 15px' }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 13, overflow: 'hidden', flexShrink: 0 }}>
+                    <img src={p.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>{p.m}</div>
-                    <div style={{ fontSize: 12, color: G.muted }}>{p.ann} · {p.h}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 2 }}>{p.m}</div>
+                    <div style={{ fontSize: 11, color: G.muted }}>{p.ann} · {p.h}</div>
                   </div>
-                  <div style={{ padding: '4px 10px', borderRadius: 20, background: p.cert ? '#EBF4E1' : '#FDF8ED', color: p.cert ? G.primary : G.gold, fontSize: 11, fontWeight: 700 }}>
-                    {p.cert ? 'Inspecté' : 'En cours'}
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: scoreColor(p.score) }}>{p.score}<span style={{ fontSize: 9, fontWeight: 500, color: G.muted }}>/100</span></div>
+                    <div style={{ fontSize: 9, color: G.muted, fontWeight: 500 }}>Score AgriCertif</div>
                   </div>
+                </div>
+                {/* Inspection bullet */}
+                <div style={{ borderTop: `1px solid ${G.border}`, padding: '10px 15px',
+                              display: 'flex', alignItems: 'center', gap: 10, background: G.bg }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: 4,
+                                  background: p.cert ? G.primary : G.gold, flexShrink: 0 }} />
+                    <div style={{ fontSize: 11, fontWeight: 700,
+                                  color: p.cert ? G.primary : G.gold }}>
+                      {p.cert ? 'Inspection complète' : 'Inspection en cours'}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: G.dark }}>{p.annoncé}</div>
+                  <div style={{ padding: '3px 9px', borderRadius: 20, fontSize: 9, fontWeight: 700,
+                                background: '#EBF4E1', color: G.primary }}>En ligne</div>
+                </div>
+                {/* Barre progression inspection */}
+                <div style={{ height: 3, background: '#E5E7EB' }}>
+                  <div style={{ width: `${p.pct}%`, height: '100%', background: p.cert ? G.primary : G.gold,
+                                borderRadius: '0 2px 2px 0', transition: 'width 0.6s ease' }} />
                 </div>
               </div>
             ))}
           </div>
         )}
+        {tab === 'ventes' && <VentesTab onOpenListing={onOpenListing} />}
         {tab === 'profil' && (
           <div style={{ padding: '18px 20px' }}>
             {/* Hero profil */}
@@ -1917,9 +2230,9 @@ function HomeScreen({ onNewInspection, onOpenListing }) {
 
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 64, background: 'white', borderTop: `1px solid ${G.border}`, display: 'flex', alignItems: 'center', paddingBottom: 6 }}>
         {[
-          { id: 'home',   label: 'Accueil',   icon: 'home' },
-          { id: 'new',    label: 'Inspecter', icon: 'plus', special: true },
-          { id: 'parc',   label: 'Mon parc',  icon: 'truck' },
+          { id: 'new',    label: 'Inspecter', icon: 'plus',  special: true },
+          { id: 'parc',   label: 'Mon parc',  icon: 'tractor' },
+          { id: 'ventes', label: 'Mes ventes', icon: 'tag' },
           { id: 'profil', label: 'Profil',    icon: 'user' },
         ].map(t => (
           <button key={t.id} onClick={() => t.special ? onNewInspection() : setTab(t.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0' }}>
