@@ -1564,7 +1564,6 @@ const CAT_META = {
   presse:       { label:'Presse',       color:'#B8860B', bg:'#FEF9E7', icon:'bale'     },
   autre:        { label:'Autre',        color:'#5C6B4E', bg:'#F0F2EE', icon:'truck'    },
 };
-
 /* ══════════════════════════════════
    FICHE VÉHICULE
 ══════════════════════════════════ */
@@ -1833,276 +1832,640 @@ function CompanyScreen({ companyId, onBack, onOpenVehicle }) {
 /* ══════════════════════════════════
    ÉCRAN RECHERCHE (Home)
 ══════════════════════════════════ */
-function SearchScreen({ onOpenVehicle, onOpenCompany, onNewInspection }) {
-  const [tab,         setTab]         = useState('recherche');
-  const [searchMode,  setSearchMode]  = useState('plaque');
-  const [plateInput,  setPlateInput]  = useState('');
-  const [compInput,   setCompInput]   = useState('');
-  const [selectedCat, setSelectedCat] = useState(null);
-  const [prospCat,    setProspCat]    = useState('tracteur');
 
-  const filteredCompanies = useMemo(()=>{
-    if (!compInput.trim()) return COMPANIES;
-    const q=compInput.toLowerCase();
-    return COMPANIES.filter(c=>c.nom.toLowerCase().includes(q)||c.ville.toLowerCase().includes(q)||c.siret.includes(q));
-  }, [compInput]);
+/* ══════════════════════════════════
+   ZONES GÉOGRAPHIQUES
+══════════════════════════════════ */
+const ZONES = [
+  {
+    id: 'all', label: 'Tout le dpt', short: 'Tout',
+    communes: [],
+  },
+  {
+    id: 'champagne-crayeuse', label: 'Champagne Crayeuse', short: 'Ch. Crayeuse',
+    desc: 'Grandes cultures — plateau calcaire',
+    communes: ['ST FLAVY','TROYES','LUSIGNY-SUR-BARSE','ARCIS-SUR-AUBE','MÉRY-SUR-SEINE','SAINT-HILAIRE-SOUS-ROMILLY','VILLIERS-HERBISSE','HERBISSE','TORCY-LE-GRAND'],
+    parc: 1820, surface: '148 000 ha',
+  },
+  {
+    id: 'brie-champenoise', label: 'Brie Champenoise', short: 'Brie',
+    desc: 'Polyculture — limons argileux',
+    communes: ['VILLENAUXE-LA-GRANDE','NOGENT-SUR-SEINE','ROMILLY-SUR-SEINE','MAILLY-LE-CAMP','PRUNAY-BELLEVILLE'],
+    parc: 610, surface: '52 000 ha',
+  },
+  {
+    id: 'der-brienne', label: 'Der-Brienne', short: 'Der',
+    desc: 'Grandes cultures — plaine argileuse',
+    communes: ['BRIENNE-LE-CHÂTEAU','MONTIER-EN-DER','MARGERIE-HANCOURT','HAMPIGNY','UNIENVILLE'],
+    parc: 540, surface: '44 000 ha',
+  },
+  {
+    id: 'bar-sequanais', label: 'Bar-Séquanais', short: 'Bar-Séquanais',
+    desc: 'Vignes + grandes cultures — Côte des Bar',
+    communes: ['BAR-SUR-AUBE','BAR-SUR-SEINE','ESSOYES','GYÉET-SUR-AUJON','BLIGNY'],
+    parc: 490, surface: '38 000 ha',
+  },
+  {
+    id: 'pays-othe', label: "Pays d'Othe", short: "Othe",
+    desc: 'Bocage — polyélevage, forêt',
+    communes: ["ERVy-LE-CHÂTEL","AIX-EN-OTHE","CHAOURCE","RIGNY-LE-FERRON","MARAYE-EN-OTHE"],
+    parc: 320, surface: '24 000 ha',
+  },
+  {
+    id: 'sezannais', label: 'Sézannais', short: 'Sézannais',
+    desc: 'Grandes cultures — plaine',
+    communes: ['SÉZANNE','VINDEY','ALLEMANT','BARBONNE-FAYEL'],
+    parc: 280, surface: '22 000 ha',
+  },
+  {
+    id: 'perthois', label: 'Perthois', short: 'Perthois',
+    desc: 'Grandes cultures — Marne',
+    communes: ['SAINT-DIZIER','JOINVILLE','WASSY','PERTHES'],
+    parc: 220, surface: '19 000 ha',
+  },
+];
 
-  const allVehicles = useMemo(()=>Object.values(VEHICLES),[]);
-  const filteredBycat = useMemo(()=>{
-    if (!selectedCat) return [];
-    return allVehicles.filter(v=>v.categorie===selectedCat);
-  }, [selectedCat, allVehicles]);
+/* Matériel étendu pour la prospection */
+const ALL_MATERIEL = [
+  ...Object.values(VEHICLES),
+  { plaque:'TK112AB', marque:'FENDT', modele:'724 VARIO', categorie:'tracteur', dateMEC:'10/04/2018', poidsKg:8400, no:'O', societeId:'gaec-3-chenes', zoneId:'champagne-crayeuse', puissance:240 },
+  { plaque:'RZ234CD', marque:'CLAAS', modele:'LEXION 750', categorie:'moissonneuse', dateMEC:'15/07/2016', poidsKg:18200, no:'O', societeId:'gaec-3-chenes', zoneId:'champagne-crayeuse', puissance:null },
+  { plaque:'WM567EF', marque:'VÄDERSTAD', modele:'TEMPO L 16', categorie:'semoir', dateMEC:'02/03/2021', poidsKg:5600, no:'N', societeId:'gaec-3-chenes', zoneId:'champagne-crayeuse', puissance:null },
+  { plaque:'BN890GH', marque:'FENDT', modele:'516 VARIO', categorie:'tracteur', dateMEC:'20/11/2021', poidsKg:7200, no:'N', societeId:null, zoneId:'brie-champenoise', puissance:165 },
+  { plaque:'XP123IJ', marque:'JOHN DEERE', modele:'S780', categorie:'moissonneuse', dateMEC:'08/06/2019', poidsKg:19400, no:'O', societeId:null, zoneId:'der-brienne', puissance:null },
+  { plaque:'LM456KL', marque:'CASE IH', modele:'OPTUM 300', categorie:'tracteur', dateMEC:'15/03/2020', poidsKg:9100, no:'O', societeId:null, zoneId:'der-brienne', puissance:300 },
+  { plaque:'QF789MN', marque:'KUHN', modele:'METRIS 3000', categorie:'semoir', dateMEC:'22/08/2020', poidsKg:3800, no:'O', societeId:null, zoneId:'bar-sequanais', puissance:null },
+  { plaque:'HG012OP', marque:'NEW HOLLAND', modele:'T7.270', categorie:'tracteur', dateMEC:'14/01/2017', poidsKg:8600, no:'O', societeId:null, zoneId:'pays-othe', puissance:270 },
+  { plaque:'ZC345QR', marque:'AMAZONE', modele:'CITAN 15001-C', categorie:'semoir', dateMEC:'30/09/2022', poidsKg:2200, no:'N', societeId:null, zoneId:'sezannais', puissance:null },
+  { plaque:'VT678ST', marque:'JOHN DEERE', modele:'6175R', categorie:'tracteur', dateMEC:'05/05/2019', poidsKg:8900, no:'O', societeId:null, zoneId:'champagne-crayeuse', puissance:175 },
+  { plaque:'NE901UV', marque:'CLAAS', modele:'TUCANO 570', categorie:'moissonneuse', dateMEC:'20/06/2018', poidsKg:14800, no:'O', societeId:null, zoneId:'brie-champenoise', puissance:null },
+  { plaque:'PR234WX', marque:'HORSCH', modele:'JOKER 8 CT', categorie:'dechaumeur', dateMEC:'12/10/2021', poidsKg:6100, no:'N', societeId:null, zoneId:'der-brienne', puissance:null },
+  { plaque:'DK567YZ', marque:'FENDT', modele:'933 VARIO', categorie:'tracteur', dateMEC:'28/08/2017', poidsKg:11200, no:'O', societeId:null, zoneId:'champagne-crayeuse', puissance:333 },
+  { plaque:'SB890AB', marque:'KUHN', modele:'SB 1290 D', categorie:'presse', dateMEC:'15/05/2020', poidsKg:5800, no:'O', societeId:null, zoneId:'pays-othe', puissance:null },
+  { plaque:'GH123CD', marque:'NEW HOLLAND', modele:'CR10.90', categorie:'moissonneuse', dateMEC:'01/07/2022', poidsKg:22000, no:'N', societeId:null, zoneId:'sezannais', puissance:null },
+];
 
-  const handlePlateLookup = () => {
-    const p=plateInput.trim().toUpperCase().replace(/[\s-]/g,'');
-    if (p && VEHICLES[p]) onOpenVehicle(p);
+/* Helper: age depuis dateMEC */
+function getAge(dateMEC) {
+  if (!dateMEC) return null;
+  const yr = parseInt(dateMEC.slice(-4));
+  return isNaN(yr) ? null : new Date().getFullYear() - yr;
+}
+
+/* ══════════════════════════════════
+   TAB — INSPECTION (RECHERCHE)
+══════════════════════════════════ */
+function InspectionTab({ onOpenVehicle, onOpenCompany, onNewInspection }) {
+  const [mode,  setMode]  = useState('modele');
+  const [query, setQuery] = useState('');
+
+  const allVehicles = useMemo(() => Object.values(VEHICLES), []);
+
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+
+    if (mode === 'plaque') {
+      if (!q) return allVehicles; // show all when empty
+      return allVehicles.filter(v => v.plaque.toLowerCase().includes(q));
+    }
+    if (mode === 'modele') {
+      if (!q) return allVehicles;
+      return allVehicles.filter(v =>
+        v.marque.toLowerCase().includes(q) ||
+        v.modele.toLowerCase().includes(q) ||
+        v.categorie.toLowerCase().includes(q)
+      );
+    }
+    if (mode === 'societe') {
+      return null; // special: render companies
+    }
+    return [];
+  }, [mode, query, allVehicles]);
+
+  const companyResults = useMemo(() => {
+    if (mode !== 'societe') return [];
+    const q = query.trim().toLowerCase();
+    if (!q) return COMPANIES;
+    return COMPANIES.filter(c =>
+      c.nom.toLowerCase().includes(q) ||
+      c.ville.toLowerCase().includes(q) ||
+      c.siret.includes(q)
+    );
+  }, [mode, query]);
+
+  const PLACEHOLDERS = {
+    plaque:  'Ex : DS134ST',
+    modele:  'Ex : John Deere, Fendt, 6150R…',
+    societe: 'Ex : SCEA, EARL, nom…',
   };
+
+  const grouped = useMemo(() => {
+    if (mode === 'societe' || !results) return null;
+    return results.reduce((acc, v) => {
+      const k = v.categorie || 'autre';
+      if (!acc[k]) acc[k] = [];
+      acc[k].push(v);
+      return acc;
+    }, {});
+  }, [results, mode]);
 
   return (
     <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', background:G.bg }}>
-      {/* Header */}
-      <div style={{ background:G.dark, flexShrink:0, paddingTop:'max(calc(env(safe-area-inset-top,0px)+12px),16px)', paddingBottom:0 }}>
-        <div style={{ padding:'0 20px 14px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+      {/* ── Header fixe ── */}
+      <div style={{ background:G.dark, flexShrink:0, paddingTop:'max(calc(env(safe-area-inset-top,0px)+10px),14px)', paddingBottom:14 }}>
+        <div style={{ padding:'0 16px 12px', display:'flex', alignItems:'baseline', justifyContent:'space-between' }}>
           <div>
-            <div style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.35)', letterSpacing:2, textTransform:'uppercase' }}>AgriCertif</div>
-            <div style={{ fontSize:22, fontWeight:900, color:'white', marginTop:1 }}>Outil commercial</div>
+            <div style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,0.35)', letterSpacing:2, textTransform:'uppercase' }}>AgriCertif</div>
+            <div style={{ fontSize:22, fontWeight:900, color:'white', lineHeight:1.1, marginTop:1 }}>Inspection</div>
           </div>
-          <Ic n="tractor" s={32} c="rgba(255,255,255,0.15)" />
+          <button onClick={onNewInspection} style={{ display:'flex', alignItems:'center', gap:5, background:G.light, border:'none', borderRadius:20, padding:'7px 13px', cursor:'pointer' }}>
+            <Ic n="plus" s={14} c="white" />
+            <span style={{ fontSize:12, fontWeight:800, color:'white' }}>Nouvelle</span>
+          </button>
         </div>
-        <div style={{ display:'flex', borderTop:'1px solid rgba(255,255,255,0.08)' }}>
-          {[['recherche','Recherche','search'],['prospection','Prospection','chart'],['profil','Profil','user']].map(([k,l,ic])=>(
-            <button key={k} onClick={()=>setTab(k)} style={{ flex:1, background:'none', border:'none', cursor:'pointer', padding:'10px 0', display:'flex', flexDirection:'column', alignItems:'center', gap:3, borderBottom:tab===k?`2px solid ${G.light}`:'2px solid transparent' }}>
-              <Ic n={ic} s={17} c={tab===k?G.light:'rgba(255,255,255,0.3)'} />
-              <span style={{ fontSize:10, fontWeight:700, color:tab===k?G.light:'rgba(255,255,255,0.3)' }}>{l}</span>
+
+        {/* Barre de recherche */}
+        <div style={{ margin:'0 16px', background:'white', borderRadius:12, display:'flex', alignItems:'center', gap:8, padding:'0 12px', boxShadow:'0 2px 8px rgba(0,0,0,0.12)' }}>
+          <Ic n="search" s={16} c={G.muted} />
+          <input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder={PLACEHOLDERS[mode]}
+            style={{ flex:1, border:'none', outline:'none', fontSize:15, fontWeight:500, padding:'13px 0', color:'#111', background:'transparent', fontFamily:'system-ui,-apple-system,sans-serif' }}
+          />
+          {query !== '' && (
+            <button onClick={()=>setQuery('')} style={{ background:'#E8E8E8', border:'none', borderRadius:10, width:20, height:20, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <span style={{ fontSize:11, color:'#666', lineHeight:1 }}>✕</span>
+            </button>
+          )}
+        </div>
+
+        {/* Modes */}
+        <div style={{ display:'flex', gap:6, padding:'10px 16px 0' }}>
+          {[['plaque','Plaque','id'],['modele','Modèle','tractor'],['societe','Société','building']].map(([k,l,ic]) => (
+            <button key={k} onClick={()=>{ setMode(k); setQuery(''); }} style={{ display:'flex', alignItems:'center', gap:4, padding:'5px 11px', borderRadius:20, border:'none', cursor:'pointer', background: mode===k ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.07)', transition:'background 0.15s' }}>
+              <Ic n={ic} s={11} c={mode===k ? 'white' : 'rgba(255,255,255,0.45)'} />
+              <span style={{ fontSize:11, fontWeight:700, color: mode===k ? 'white' : 'rgba(255,255,255,0.45)' }}>{l}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div style={{ flex:1, overflowY:'auto' }}>
+      {/* ── Résultats ── */}
+      <div style={{ flex:1, overflowY:'auto', padding:'12px 14px 16px' }}>
 
-        {/* ══ RECHERCHE ══ */}
-        {tab==='recherche' && (
-          <div style={{ padding:'16px 16px 80px' }}>
-            {/* Mode toggle */}
-            <div style={{ display:'flex', background:'white', borderRadius:12, padding:3, marginBottom:16, boxShadow:'0 1px 4px rgba(0,0,0,0.06)' }}>
-              {[['plaque','Plaque','id'],['categorie','Catégorie','tractor'],['societe','Société','building']].map(([k,l,ic])=>(
-                <button key={k} onClick={()=>setSearchMode(k)} style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:5, padding:'8px 4px', borderRadius:9, border:'none', cursor:'pointer', background:searchMode===k?G.primary:'transparent', transition:'background 0.15s' }}>
-                  <Ic n={ic} s={14} c={searchMode===k?'white':G.muted} />
-                  <span style={{ fontSize:11, fontWeight:700, color:searchMode===k?'white':G.muted }}>{l}</span>
-                </button>
-              ))}
+        {/* Mode SOCIÉTÉ */}
+        {mode === 'societe' && (
+          <>
+            {companyResults.length === 0
+              ? <div style={{ textAlign:'center', color:G.muted, padding:40, fontSize:14 }}>Aucune société trouvée</div>
+              : companyResults.map(co => {
+                  const vCount = (co.plaques || []).length;
+                  const cats = (co.plaques || []).map(p => VEHICLES[p]?.categorie).filter(Boolean);
+                  const uniqCats = [...new Set(cats)];
+                  return (
+                    <button key={co.id} onClick={()=>onOpenCompany(co.id)} style={{ width:'100%', background:'white', border:'none', borderRadius:14, padding:'13px 14px', marginBottom:8, display:'flex', alignItems:'center', gap:12, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 5px rgba(0,0,0,0.06)' }}>
+                      <div style={{ width:42, height:42, borderRadius:11, background:G.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, border:`1.5px solid ${G.border}` }}>
+                        <Ic n="building" s={20} c={G.muted} />
+                      </div>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontSize:13, fontWeight:800, color:'#111', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{co.nom}</div>
+                        <div style={{ fontSize:11, color:G.muted, marginTop:1 }}>{co.ville} · {co.cp}</div>
+                        <div style={{ display:'flex', gap:4, marginTop:5, flexWrap:'wrap' }}>
+                          {uniqCats.map(cat => {
+                            const m = CAT_META[cat] || CAT_META.autre;
+                            return <span key={cat} style={{ fontSize:10, fontWeight:700, color:m.color, background:m.bg, borderRadius:6, padding:'1px 6px' }}>{m.label}</span>;
+                          })}
+                          <span style={{ fontSize:10, fontWeight:600, color:G.muted }}>{vCount} matériel{vCount>1?'s':''}</span>
+                        </div>
+                      </div>
+                      <Ic n="chevR" s={16} c={G.border} />
+                    </button>
+                  );
+                })
+            }
+          </>
+        )}
+
+        {/* Mode PLAQUE ou MODÈLE — résultats groupés par catégorie */}
+        {mode !== 'societe' && grouped && Object.keys(CAT_META).map(catKey => {
+          const items = grouped[catKey];
+          if (!items || items.length === 0) return null;
+          const meta = CAT_META[catKey];
+          return (
+            <div key={catKey} style={{ marginBottom:16 }}>
+              {/* Section header */}
+              <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:6, padding:'0 2px' }}>
+                <Ic n={meta.icon} s={13} c={meta.color} />
+                <span style={{ fontSize:11, fontWeight:700, color:meta.color, textTransform:'uppercase', letterSpacing:0.8 }}>{meta.label}s</span>
+                <span style={{ fontSize:11, color:G.muted, fontWeight:500 }}>({items.length})</span>
+              </div>
+              {items.map(veh => {
+                const age = getAge(veh.dateMEC);
+                const co = COMPANIES.find(c => c.id === veh.societeId);
+                return (
+                  <button key={veh.plaque} onClick={()=>onOpenVehicle(veh.plaque)} style={{ width:'100%', background:'white', border:'none', borderRadius:14, padding:'12px 13px', marginBottom:7, display:'flex', alignItems:'center', gap:11, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 5px rgba(0,0,0,0.06)' }}>
+                    <div style={{ width:40, height:40, borderRadius:10, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <Ic n={meta.icon} s={20} c={meta.color} />
+                    </div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:2 }}>
+                        <span style={{ fontSize:13, fontWeight:800, color:'#111' }}>{veh.marque} {veh.modele}</span>
+                        <span style={{ fontSize:9, fontWeight:800, background:veh.no==='N'?'#22C55E':'#F59E0B', color:'white', borderRadius:4, padding:'1px 5px' }}>{veh.no==='N'?'NEUF':'OCC.'}</span>
+                      </div>
+                      <div style={{ display:'flex', gap:6, alignItems:'center' }}>
+                        <span style={{ fontSize:11, color:'#444', fontWeight:600, fontFamily:'ui-monospace,monospace', letterSpacing:0.5 }}>{veh.plaque}</span>
+                        {age !== null && <span style={{ fontSize:11, color:G.muted }}>{age} ans</span>}
+                        {co && <span style={{ fontSize:11, color:G.muted, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', maxWidth:110 }}>{co.nom}</span>}
+                      </div>
+                    </div>
+                    <Ic n="chevR" s={15} c="#DDD" />
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })}
+
+        {/* Aucun résultat */}
+        {mode !== 'societe' && grouped && Object.values(grouped).every(v => !v?.length) && query && (
+          <div style={{ textAlign:'center', color:G.muted, padding:40, fontSize:14 }}>Aucun résultat pour « {query} »</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════
+   TAB — PROSPECTION
+══════════════════════════════════ */
+function ProspectionTab({ onOpenVehicle, onOpenCompany }) {
+  const [zone,     setZone]     = useState('all');
+  const [catFilter,setCatFilter] = useState('all');
+  const [marFilter,setMarFilter] = useState('');
+  const [ageFilter,setAgeFilter] = useState('all');
+  const [puiFilter,setPuiFilter] = useState('all');
+  const [showFilters,setShowFilters] = useState(false);
+  const [section,  setSection]  = useState('materiel'); // materiel | opportunites | prospects
+
+  const TOP_MARQUES = [
+    { m:'John Deere', cats:['tracteur','moissonneuse'], p:35 },
+    { m:'Fendt',      cats:['tracteur'], p:25 },
+    { m:'CLAAS',      cats:['moissonneuse'], p:22 },
+    { m:'Horsch',     cats:['semoir','dechaumeur'], p:18 },
+    { m:'New Holland',cats:['tracteur','moissonneuse'], p:15 },
+    { m:'Case IH',    cats:['tracteur'], p:12 },
+    { m:'Amazone',    cats:['semoir','dechaumeur'], p:11 },
+    { m:'Väderstad',  cats:['semoir'], p:9 },
+    { m:'Kuhn',       cats:['semoir','presse'], p:9 },
+    { m:'Lemken',     cats:['dechaumeur'], p:8 },
+  ];
+
+  const currentZone = ZONES.find(z => z.id === zone) || ZONES[0];
+
+  const filteredMateriel = useMemo(() => {
+    return ALL_MATERIEL.filter(v => {
+      if (zone !== 'all' && v.zoneId !== zone) return false;
+      if (catFilter !== 'all' && v.categorie !== catFilter) return false;
+      if (marFilter) {
+        const q = marFilter.toLowerCase();
+        if (!v.marque.toLowerCase().includes(q) && !v.modele.toLowerCase().includes(q)) return false;
+      }
+      if (ageFilter !== 'all') {
+        const age = getAge(v.dateMEC);
+        if (age === null) return false;
+        if (ageFilter === 'lt5'  && age >= 5)  return false;
+        if (ageFilter === '5-10' && (age < 5 || age > 10)) return false;
+        if (ageFilter === 'gt10' && age <= 10) return false;
+      }
+      if (puiFilter !== 'all' && v.categorie === 'tracteur') {
+        const p = v.puissance || 0;
+        if (puiFilter === 'lt150' && p >= 150) return false;
+        if (puiFilter === '150-250' && (p < 150 || p > 250)) return false;
+        if (puiFilter === 'gt250' && p <= 250) return false;
+      }
+      return true;
+    });
+  }, [zone, catFilter, marFilter, ageFilter, puiFilter]);
+
+  const activeFilterCount = [catFilter!=='all',marFilter!=='',ageFilter!=='all',puiFilter!=='all'].filter(Boolean).length;
+
+  return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', background:G.bg }}>
+      {/* ── Header ── */}
+      <div style={{ background:G.dark, flexShrink:0, paddingTop:'max(calc(env(safe-area-inset-top,0px)+10px),14px)', paddingBottom:0 }}>
+        <div style={{ padding:'0 16px 12px', display:'flex', alignItems:'baseline', justifyContent:'space-between' }}>
+          <div>
+            <div style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,0.35)', letterSpacing:2, textTransform:'uppercase' }}>AgriCertif</div>
+            <div style={{ fontSize:22, fontWeight:900, color:'white', lineHeight:1.1, marginTop:1 }}>Prospection</div>
+          </div>
+          <div style={{ textAlign:'right' }}>
+            <div style={{ fontSize:20, fontWeight:900, color:'white' }}>4 280</div>
+            <div style={{ fontSize:9, color:'rgba(255,255,255,0.4)', fontWeight:600, textTransform:'uppercase', letterSpacing:0.5 }}>machines Aube</div>
+          </div>
+        </div>
+
+        {/* Zones — scroll horizontal */}
+        <div style={{ display:'flex', gap:6, overflowX:'auto', padding:'0 16px 12px', scrollbarWidth:'none' }}>
+          {ZONES.map(z => (
+            <button key={z.id} onClick={()=>setZone(z.id)} style={{ flexShrink:0, padding:'6px 12px', borderRadius:20, border:'none', cursor:'pointer', background: zone===z.id ? 'white' : 'rgba(255,255,255,0.12)', transition:'background 0.15s' }}>
+              <span style={{ fontSize:11, fontWeight:700, color: zone===z.id ? G.dark : 'rgba(255,255,255,0.6)', whiteSpace:'nowrap' }}>{z.short || z.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Section tabs */}
+        <div style={{ display:'flex', borderTop:'1px solid rgba(255,255,255,0.08)' }}>
+          {[['materiel','Matériel'],['opportunites','Opportunités'],['prospects','Prospects']].map(([k,l]) => (
+            <button key={k} onClick={()=>setSection(k)} style={{ flex:1, background:'none', border:'none', cursor:'pointer', padding:'9px 0', fontSize:11, fontWeight:700, color:section===k?'white':'rgba(255,255,255,0.35)', borderBottom:section===k?`2px solid ${G.light}`:'2px solid transparent' }}>{l}</button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ flex:1, overflowY:'auto', padding:'0' }}>
+
+        {/* ── MATÉRIEL — recherche avancée ── */}
+        {section === 'materiel' && (
+          <div style={{ padding:'12px 14px 16px' }}>
+            {/* Zone info */}
+            {zone !== 'all' && currentZone.desc && (
+              <div style={{ background:G.primary, borderRadius:12, padding:'10px 14px', marginBottom:12, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                <div>
+                  <div style={{ fontSize:13, fontWeight:800, color:'white' }}>{currentZone.label}</div>
+                  <div style={{ fontSize:11, color:'rgba(255,255,255,0.65)', marginTop:1 }}>{currentZone.desc}</div>
+                </div>
+                <div style={{ textAlign:'right' }}>
+                  <div style={{ fontSize:16, fontWeight:900, color:'white' }}>{currentZone.parc?.toLocaleString('fr')}</div>
+                  <div style={{ fontSize:9, color:'rgba(255,255,255,0.55)', fontWeight:600 }}>machines</div>
+                </div>
+              </div>
+            )}
+
+            {/* Filtres */}
+            <div style={{ background:'white', borderRadius:12, marginBottom:12, overflow:'hidden', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+              <button onClick={()=>setShowFilters(!showFilters)} style={{ width:'100%', background:'none', border:'none', cursor:'pointer', padding:'12px 14px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                  <Ic n="filter" s={15} c={activeFilterCount>0?G.primary:G.muted} />
+                  <span style={{ fontSize:13, fontWeight:700, color:activeFilterCount>0?G.primary:'#111' }}>Filtres</span>
+                  {activeFilterCount > 0 && <span style={{ fontSize:11, fontWeight:800, background:G.primary, color:'white', borderRadius:10, padding:'1px 7px' }}>{activeFilterCount}</span>}
+                </div>
+                <Ic n={showFilters?'chevD':'chevR'} s={16} c={G.muted} />
+              </button>
+
+              {showFilters && (
+                <div style={{ borderTop:`1px solid ${G.border}`, padding:'12px 14px 14px', display:'flex', flexDirection:'column', gap:12 }}>
+                  {/* Catégorie */}
+                  <div>
+                    <div style={{ fontSize:11, fontWeight:700, color:G.muted, marginBottom:6, textTransform:'uppercase', letterSpacing:0.8 }}>Catégorie</div>
+                    <div style={{ display:'flex', gap:5, flexWrap:'wrap' }}>
+                      {[['all','Toutes'],['tracteur','Tracteur'],['moissonneuse','Moiss.'],['semoir','Semoir'],['dechaumeur','Déchaumeur'],['presse','Presse']].map(([k,l]) => (
+                        <button key={k} onClick={()=>setCatFilter(k)} style={{ padding:'5px 10px', borderRadius:20, border:`1.5px solid ${catFilter===k?G.primary:G.border}`, background:catFilter===k?G.primary:'white', cursor:'pointer' }}>
+                          <span style={{ fontSize:11, fontWeight:700, color:catFilter===k?'white':G.muted }}>{l}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Marque / modèle */}
+                  <div>
+                    <div style={{ fontSize:11, fontWeight:700, color:G.muted, marginBottom:6, textTransform:'uppercase', letterSpacing:0.8 }}>Marque / Modèle</div>
+                    <div style={{ display:'flex', alignItems:'center', gap:8, background:G.bg, borderRadius:10, padding:'8px 12px' }}>
+                      <Ic n="search" s={14} c={G.muted} />
+                      <input value={marFilter} onChange={e=>setMarFilter(e.target.value)} placeholder="Ex : John Deere, Fendt…" style={{ flex:1, border:'none', outline:'none', fontSize:13, background:'transparent', color:'#111', fontFamily:'system-ui,sans-serif' }} />
+                    </div>
+                  </div>
+
+                  {/* Âge */}
+                  <div>
+                    <div style={{ fontSize:11, fontWeight:700, color:G.muted, marginBottom:6, textTransform:'uppercase', letterSpacing:0.8 }}>Âge du matériel</div>
+                    <div style={{ display:'flex', gap:5 }}>
+                      {[['all','Tous'],['lt5','< 5 ans'],['5-10','5–10 ans'],['gt10','> 10 ans']].map(([k,l]) => (
+                        <button key={k} onClick={()=>setAgeFilter(k)} style={{ flex:1, padding:'6px 4px', borderRadius:10, border:`1.5px solid ${ageFilter===k?G.primary:G.border}`, background:ageFilter===k?G.primary:'white', cursor:'pointer' }}>
+                          <span style={{ fontSize:10, fontWeight:700, color:ageFilter===k?'white':G.muted }}>{l}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Puissance (tracteurs) */}
+                  <div>
+                    <div style={{ fontSize:11, fontWeight:700, color:G.muted, marginBottom:6, textTransform:'uppercase', letterSpacing:0.8 }}>Puissance (tracteurs)</div>
+                    <div style={{ display:'flex', gap:5 }}>
+                      {[['all','Toutes'],['lt150','< 150 ch'],['150-250','150–250 ch'],['gt250','> 250 ch']].map(([k,l]) => (
+                        <button key={k} onClick={()=>setPuiFilter(k)} style={{ flex:1, padding:'6px 4px', borderRadius:10, border:`1.5px solid ${puiFilter===k?G.primary:G.border}`, background:puiFilter===k?G.primary:'white', cursor:'pointer' }}>
+                          <span style={{ fontSize:10, fontWeight:700, color:puiFilter===k?'white':G.muted }}>{l}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {activeFilterCount > 0 && (
+                    <button onClick={()=>{setCatFilter('all');setMarFilter('');setAgeFilter('all');setPuiFilter('all');}} style={{ padding:'8px', borderRadius:10, background:G.bg, border:`1px solid ${G.border}`, cursor:'pointer', fontSize:12, fontWeight:700, color:G.red }}>Réinitialiser les filtres</button>
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Plaque */}
-            {searchMode==='plaque' && <>
-              <div style={{ background:'white', borderRadius:13, padding:'14px 16px', marginBottom:12, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
-                <div style={{ fontSize:12, fontWeight:700, color:G.muted, marginBottom:8 }}>Saisir la plaque d'immatriculation</div>
-                <div style={{ display:'flex', gap:8 }}>
-                  <input
-                    value={plateInput} onChange={e=>setPlateInput(e.target.value.toUpperCase())}
-                    onKeyDown={e=>e.key==='Enter'&&handlePlateLookup()}
-                    placeholder="Ex : DS134ST"
-                    style={{ flex:1, border:`1.5px solid ${G.border}`, borderRadius:10, padding:'11px 14px', fontSize:18, fontWeight:800, letterSpacing:2, outline:'none', color:'#111', fontFamily:'monospace', textTransform:'uppercase' }}
-                  />
-                  <button onClick={handlePlateLookup} style={{ padding:'11px 18px', borderRadius:10, background:G.primary, border:'none', cursor:'pointer' }}>
-                    <Ic n="search" s={18} c="white" />
-                  </button>
+            {/* Communes de la zone */}
+            {zone !== 'all' && currentZone.communes?.length > 0 && (
+              <div style={{ marginBottom:10 }}>
+                <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:6 }}>Communes dans la zone</div>
+                <div style={{ display:'flex', gap:5, flexWrap:'wrap' }}>
+                  {currentZone.communes.map(c => (
+                    <span key={c} style={{ fontSize:11, fontWeight:600, color:G.dark, background:G.border, borderRadius:6, padding:'3px 8px' }}>{c}</span>
+                  ))}
                 </div>
-                {plateInput && !VEHICLES[plateInput.trim().toUpperCase().replace(/[\s-]/g,'')] && (
-                  <div style={{ marginTop:8, fontSize:11, color:G.red }}>Plaque non trouvée dans la base</div>
-                )}
               </div>
-              <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Accès rapide</div>
-              {['DS134ST','GZ969SL','FM459QP'].map(p=>{
-                const veh=VEHICLES[p]; if (!veh) return null;
-                const meta=CAT_META[veh.categorie]||CAT_META.autre;
-                return (
-                  <button key={p} onClick={()=>onOpenVehicle(p)} style={{ width:'100%', background:'white', border:'none', borderRadius:12, padding:'11px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
-                    <div style={{ width:34, height:34, borderRadius:9, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                      <Ic n={meta.icon} s={18} c={meta.color} />
-                    </div>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontSize:13, fontWeight:800, color:'#111' }}>{veh.marque} {veh.modele}</div>
-                      <div style={{ fontSize:11, color:G.muted }}>{p} · {meta.label} · {veh.no==='N'?'Neuf':'Occasion'}</div>
-                    </div>
-                    <Ic n="chevR" s={16} c={G.border} />
-                  </button>
-                );
-              })}
-            </>}
+            )}
 
-            {/* Catégorie */}
-            {searchMode==='categorie' && <>
-              <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:14 }}>
-                {Object.entries(CAT_META).map(([k,m])=>(
-                  <button key={k} onClick={()=>setSelectedCat(selectedCat===k?null:k)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 13px', borderRadius:20, border:`1.5px solid ${selectedCat===k?m.color:G.border}`, background:selectedCat===k?m.bg:'white', cursor:'pointer', transition:'all 0.15s' }}>
-                    <Ic n={m.icon} s={14} c={selectedCat===k?m.color:G.muted} />
-                    <span style={{ fontSize:12, fontWeight:700, color:selectedCat===k?m.color:G.muted }}>{m.label}s</span>
-                  </button>
-                ))}
-              </div>
-              {selectedCat && filteredBycat.length===0 && <div style={{ textAlign:'center', color:G.muted, padding:32, fontSize:13 }}>Aucun matériel dans cette catégorie</div>}
-              {filteredBycat.map(veh=>{
-                const meta=CAT_META[veh.categorie]||CAT_META.autre;
-                const annee=veh.dateMEC?parseInt(veh.dateMEC.slice(-4)):null;
-                return (
-                  <button key={veh.plaque} onClick={()=>onOpenVehicle(veh.plaque)} style={{ width:'100%', background:'white', border:'none', borderRadius:12, padding:'11px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
-                    <div style={{ width:34, height:34, borderRadius:9, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                      <Ic n={meta.icon} s={18} c={meta.color} />
-                    </div>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontSize:13, fontWeight:800, color:'#111' }}>{veh.marque} {veh.modele}</div>
-                      <div style={{ fontSize:11, color:G.muted }}>{veh.plaque} · {annee||'—'} · {((veh.poidsKg||0)/1000).toFixed(1)} t</div>
-                    </div>
-                    <Ic n="chevR" s={16} c={G.border} />
-                  </button>
-                );
-              })}
-              {!selectedCat && <div style={{ textAlign:'center', color:G.muted, padding:32, fontSize:13 }}>Sélectionnez une catégorie ci-dessus</div>}
-            </>}
+            {/* Compteur résultats */}
+            <div style={{ fontSize:12, fontWeight:700, color:G.muted, marginBottom:8 }}>
+              {filteredMateriel.length} matériel{filteredMateriel.length>1?'s':''} trouvé{filteredMateriel.length>1?'s':''}
+            </div>
 
-            {/* Société */}
-            {searchMode==='societe' && <>
-              <div style={{ background:'white', borderRadius:13, padding:'12px 14px', marginBottom:14, boxShadow:'0 1px 6px rgba(0,0,0,0.05)', display:'flex', gap:8, alignItems:'center' }}>
-                <Ic n="search" s={16} c={G.muted} />
-                <input value={compInput} onChange={e=>setCompInput(e.target.value)} placeholder="Nom, ville ou SIRET…" style={{ flex:1, border:'none', outline:'none', fontSize:14, color:'#111' }} />
-              </div>
-              {filteredCompanies.map(co=>(
-                <button key={co.id} onClick={()=>onOpenCompany(co.id)} style={{ width:'100%', background:'white', border:'none', borderRadius:12, padding:'12px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
-                  <div style={{ width:38, height:38, borderRadius:10, background:G.border, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                    <Ic n="building" s={20} c={G.muted} />
+            {/* Liste matériel */}
+            {filteredMateriel.map((veh, i) => {
+              const meta = CAT_META[veh.categorie] || CAT_META.autre;
+              const age = getAge(veh.dateMEC);
+              const zone = ZONES.find(z => z.id === veh.zoneId);
+              const co = veh.societeId ? COMPANIES.find(c => c.id === veh.societeId) : null;
+              const hasDetail = !!VEHICLES[veh.plaque];
+              return (
+                <button key={veh.plaque || i} onClick={()=>hasDetail&&onOpenVehicle(veh.plaque)} style={{ width:'100%', background:'white', border:'none', borderRadius:14, padding:'11px 13px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:hasDetail?'pointer':'default', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ width:38, height:38, borderRadius:10, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                    <Ic n={meta.icon} s={19} c={meta.color} />
                   </div>
-                  <div style={{ flex:1 }}>
-                    <div style={{ fontSize:13, fontWeight:800, color:'#111' }}>{co.nom}</div>
-                    <div style={{ fontSize:11, color:G.muted }}>{co.ville} · {co.plaques.length} matériel{co.plaques.length>1?'s':''}</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:5, marginBottom:2 }}>
+                      <span style={{ fontSize:13, fontWeight:800, color:'#111' }}>{veh.marque} {veh.modele}</span>
+                      <span style={{ fontSize:9, fontWeight:800, background:veh.no==='N'?'#22C55E':'#F59E0B', color:'white', borderRadius:4, padding:'1px 5px' }}>{veh.no==='N'?'N':'O'}</span>
+                    </div>
+                    <div style={{ fontSize:11, color:G.muted, display:'flex', gap:6 }}>
+                      <span style={{ fontFamily:'ui-monospace,monospace', fontSize:10, letterSpacing:0.4, color:'#555' }}>{veh.plaque}</span>
+                      {age !== null && <span>{age} ans</span>}
+                      {veh.puissance ? <span>{veh.puissance} ch</span> : null}
+                      {zone && <span style={{ color:G.primary, fontWeight:600 }}>{zone.short||zone.label}</span>}
+                    </div>
+                    {co && <div style={{ fontSize:10, color:G.muted, marginTop:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{co.nom}</div>}
                   </div>
-                  <Ic n="chevR" s={16} c={G.border} />
+                  {hasDetail && <Ic n="chevR" s={14} c="#DDD" />}
                 </button>
-              ))}
-            </>}
+              );
+            })}
+            {filteredMateriel.length === 0 && (
+              <div style={{ textAlign:'center', color:G.muted, padding:40, fontSize:14 }}>Aucun matériel ne correspond à ces critères</div>
+            )}
           </div>
         )}
 
-        {/* ══ PROSPECTION ══ */}
-        {tab==='prospection' && (
-          <div style={{ padding:'16px 16px 80px' }}>
-            <div style={{ background:`linear-gradient(135deg, ${G.dark}, ${G.primary})`, borderRadius:16, padding:'16px 18px', marginBottom:14 }}>
-              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
-                <div>
-                  <div style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:1.5 }}>Zone</div>
-                  <div style={{ fontSize:22, fontWeight:900, color:'white' }}>{PROSPECTION_DATA.departement}</div>
-                  <div style={{ fontSize:11, color:'rgba(255,255,255,0.5)', marginTop:2 }}>{PROSPECTION_DATA.surface}</div>
+        {/* ── OPPORTUNITÉS ── */}
+        {section === 'opportunites' && (
+          <div style={{ padding:'12px 14px 16px' }}>
+            {/* Stats zone */}
+            <div style={{ background:`linear-gradient(135deg, ${G.dark}, ${G.primary})`, borderRadius:14, padding:'14px 16px', marginBottom:14 }}>
+              <div style={{ fontSize:13, fontWeight:800, color:'white' }}>{zone==='all'?'Aube (10)':currentZone.label}</div>
+              <div style={{ fontSize:11, color:'rgba(255,255,255,0.55)', marginBottom:10 }}>{zone==='all'?'328 000 ha céréales':currentZone.surface||''}</div>
+              <div style={{ display:'flex', gap:12 }}>
+                <div style={{ background:'rgba(255,255,255,0.1)', borderRadius:10, padding:'8px 12px', flex:1 }}>
+                  <div style={{ fontSize:18, fontWeight:900, color:'white' }}>{zone==='all'?'4 280':(currentZone.parc?.toLocaleString('fr')||'—')}</div>
+                  <div style={{ fontSize:9, color:'rgba(255,255,255,0.5)', fontWeight:600 }}>machines immat.</div>
                 </div>
-                <div style={{ textAlign:'right' }}>
-                  <div style={{ fontSize:28, fontWeight:900, color:'white' }}>{PROSPECTION_DATA.totalMachines.toLocaleString('fr')}</div>
-                  <div style={{ fontSize:10, color:'rgba(255,255,255,0.45)', fontWeight:600 }}>machines immat.</div>
+                <div style={{ background:'rgba(255,255,255,0.1)', borderRadius:10, padding:'8px 12px', flex:1 }}>
+                  <div style={{ fontSize:18, fontWeight:900, color:'white' }}>62%</div>
+                  <div style={{ fontSize:9, color:'rgba(255,255,255,0.5)', fontWeight:600 }}>segment 150–250 ch</div>
                 </div>
-              </div>
-              <div style={{ marginTop:12, background:'rgba(255,255,255,0.1)', borderRadius:10, padding:'8px 12px' }}>
-                <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.65)' }}>Segment cible : </span>
-                <span style={{ fontSize:11, fontWeight:800, color:'white' }}>{PROSPECTION_DATA.segmentCible} — {PROSPECTION_DATA.partSegment}% du marché</span>
               </div>
             </div>
 
             <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Opportunités détectées</div>
-            {PROSPECTION_DATA.opportunites.map((op,i)=>{
-              const meta=CAT_META[op.type]||CAT_META.autre;
+            {[
+              { type:'tracteur',    count:187, desc:'Tracteurs JD + Fendt > 5 ans (150–250 ch)', detail:'Renouvellement potentiel — âge moyen 7,2 ans' },
+              { type:'moissonneuse',count:43,  desc:'Moissonneuses > 7 ans', detail:'Parc vieillissant — arrêts techniques fréquents' },
+              { type:'semoir',      count:92,  desc:'Semoirs pneumatiques ancienne génération', detail:'Migration vers semis direct / strip-till' },
+              { type:'dechaumeur',  count:64,  desc:'Déchaumeurs > 8 ans', detail:'Normes agroéco — renouvellement accéléré' },
+            ].map((op, i) => {
+              const meta = CAT_META[op.type] || CAT_META.autre;
               return (
-                <div key={i} style={{ background:'white', borderRadius:12, padding:'12px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:12, boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
-                  <div style={{ width:36, height:36, borderRadius:9, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                    <Ic n={meta.icon} s={18} c={meta.color} />
-                  </div>
-                  <div style={{ flex:1 }}><div style={{ fontSize:13, fontWeight:700, color:'#111' }}>{op.desc}</div></div>
-                  <div style={{ background:`${meta.color}18`, borderRadius:8, padding:'4px 8px', textAlign:'center' }}>
-                    <div style={{ fontSize:16, fontWeight:900, color:meta.color }}>{op.count}</div>
-                    <div style={{ fontSize:9, fontWeight:600, color:meta.color }}>machines</div>
+                <div key={i} style={{ background:'white', borderRadius:13, padding:'13px 14px', marginBottom:8, boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ display:'flex', alignItems:'flex-start', gap:11 }}>
+                    <div style={{ width:38, height:38, borderRadius:10, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <Ic n={meta.icon} s={19} c={meta.color} />
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontSize:13, fontWeight:800, color:'#111', marginBottom:2 }}>{op.desc}</div>
+                      <div style={{ fontSize:11, color:G.muted }}>{op.detail}</div>
+                    </div>
+                    <div style={{ background:meta.bg, borderRadius:9, padding:'5px 8px', textAlign:'center', flexShrink:0 }}>
+                      <div style={{ fontSize:17, fontWeight:900, color:meta.color }}>{op.count}</div>
+                      <div style={{ fontSize:8, fontWeight:700, color:meta.color, textTransform:'uppercase' }}>mach.</div>
+                    </div>
                   </div>
                 </div>
               );
             })}
 
-            <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8, marginTop:8 }}>Marques — Top 5</div>
-            <div style={{ display:'flex', gap:6, marginBottom:12, overflowX:'auto', paddingBottom:2 }}>
-              {['tracteur','moissonneuse','semoir'].map(k=>(
-                <button key={k} onClick={()=>setProspCat(k)} style={{ flexShrink:0, padding:'6px 12px', borderRadius:20, border:`1.5px solid ${prospCat===k?G.primary:G.border}`, background:prospCat===k?G.primary:'white', cursor:'pointer' }}>
-                  <span style={{ fontSize:11, fontWeight:700, color:prospCat===k?'white':G.muted }}>{CAT_META[k]?.label}s</span>
-                </button>
-              ))}
-            </div>
-            <div style={{ background:'white', borderRadius:13, padding:'13px 14px', marginBottom:14, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
-              {(PROSPECTION_DATA.topMarques[prospCat]||[]).map((m,i,arr)=>(
-                <div key={i} style={{ marginBottom:i<arr.length-1?9:0 }}>
-                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
-                    <span style={{ fontSize:12, fontWeight:700, color:'#111' }}>{m.m}</span>
+            {/* Top marques */}
+            <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8, marginTop:14 }}>Présence marques — Aube</div>
+            <div style={{ background:'white', borderRadius:13, padding:'13px 14px', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+              {TOP_MARQUES.map((m, i) => (
+                <div key={i} style={{ marginBottom: i < TOP_MARQUES.length-1 ? 9 : 0 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:3 }}>
+                    <div>
+                      <span style={{ fontSize:12, fontWeight:700, color:'#111' }}>{m.m}</span>
+                      <span style={{ fontSize:10, color:G.muted, marginLeft:6 }}>{m.cats.map(c=>CAT_META[c]?.label).join(', ')}</span>
+                    </div>
                     <span style={{ fontSize:12, fontWeight:800, color:G.primary }}>{m.p}%</span>
                   </div>
-                  <div style={{ height:6, background:'#F0F0F0', borderRadius:99 }}>
-                    <div style={{ height:'100%', width:`${m.p}%`, background:i===0?G.primary:i===1?G.light:G.border, borderRadius:99, transition:'width 0.5s' }} />
+                  <div style={{ height:5, background:'#F0F0F0', borderRadius:99 }}>
+                    <div style={{ height:'100%', width:`${m.p}%`, background:i===0?G.primary:i<3?G.light:G.border, borderRadius:99 }} />
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+        )}
 
+        {/* ── PROSPECTS ── */}
+        {section === 'prospects' && (
+          <div style={{ padding:'12px 14px 16px' }}>
             <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Prospects identifiés</div>
-            {PROSPECTION_DATA.prospects.map((p,i)=>(
-              <button key={i} onClick={()=>p.id&&onOpenCompany(p.id)} style={{ width:'100%', background:'white', border:'none', borderRadius:12, padding:'12px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:p.id?'pointer':'default', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
-                <div style={{ width:36, height:36, borderRadius:9, background:p.contacted?'#E6F4EA':'#FEF9E7', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            {PROSPECTION_DATA.prospects.map((p, i) => (
+              <button key={i} onClick={()=>p.id&&onOpenCompany(p.id)} style={{ width:'100%', background:'white', border:'none', borderRadius:13, padding:'12px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:11, cursor:p.id?'pointer':'default', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ width:38, height:38, borderRadius:10, background:p.contacted?'#E8F5E9':'#FEF9E7', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                   <Ic n="building" s={18} c={p.contacted?G.primary:G.gold} />
                 </div>
                 <div style={{ flex:1 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2 }}>
                     <span style={{ fontSize:13, fontWeight:800, color:'#111' }}>{p.nom}</span>
                     {p.contacted && <span style={{ fontSize:9, background:G.primary, color:'white', borderRadius:4, padding:'1px 5px', fontWeight:700 }}>CONTACTÉ</span>}
                   </div>
-                  <div style={{ fontSize:11, color:G.muted, marginTop:1 }}>{p.ville} · {p.parc} matériel{p.parc>1?'s':''} · {p.cible}</div>
+                  <div style={{ fontSize:11, color:G.muted }}>{p.ville} · {p.parc} matériel{p.parc>1?'s':''}</div>
+                  <div style={{ fontSize:11, color:G.dark, fontWeight:600, marginTop:2 }}>{p.cible}</div>
                 </div>
-                {p.id && <Ic n="chevR" s={16} c={G.border} />}
+                {p.id && <Ic n="chevR" s={15} c="#DDD" />}
               </button>
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
 
-        {/* ══ PROFIL ══ */}
-        {tab==='profil' && (
-          <div style={{ padding:'16px 16px 80px' }}>
-            <div style={{ background:`linear-gradient(135deg, ${G.dark}, ${G.primary})`, borderRadius:16, padding:'20px 18px', marginBottom:16, display:'flex', gap:14, alignItems:'center' }}>
-              <div style={{ width:54, height:54, borderRadius:27, background:'rgba(255,255,255,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                <Ic n="user" s={28} c="rgba(255,255,255,0.8)" />
-              </div>
-              <div>
-                <div style={{ fontSize:18, fontWeight:900, color:'white' }}>Pacôme HAZOUARD</div>
-                <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)', marginTop:2 }}>Commercial agricole</div>
-                <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(255,255,255,0.1)', borderRadius:6, padding:'3px 8px', marginTop:6 }}>
-                  <Ic n="pin" s={11} c={G.light} />
-                  <span style={{ fontSize:10, fontWeight:600, color:G.light }}>Aube (10)</span>
-                </div>
-              </div>
-            </div>
-            {[
-              ['Société','AgriCorner'],
-              ['Département','Aube (10)'],
-              ['Téléphone','07 62 10 41 8'],
-              ['Email','pacome.hazouard@agricorner.com'],
-            ].map(([l,v])=>(
-              <div key={l} style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:9, display:'flex', alignItems:'center', gap:12, boxShadow:'0 1px 6px rgba(0,0,0,0.04)' }}>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize:10, color:G.muted, fontWeight:600, textTransform:'uppercase', letterSpacing:0.8 }}>{l}</div>
-                  <div style={{ fontSize:13, fontWeight:600, color:'#1A1A1A', marginTop:2 }}>{v}</div>
-                </div>
-              </div>
-            ))}
+/* ══════════════════════════════════
+   TAB — PROFIL
+══════════════════════════════════ */
+function ProfilTab() {
+  return (
+    <div style={{ flex:1, overflowY:'auto', padding:'16px 16px 24px', background:G.bg }}>
+      <div style={{ background:`linear-gradient(135deg, ${G.dark}, ${G.primary})`, borderRadius:16, padding:'20px 18px', marginBottom:16, display:'flex', gap:14, alignItems:'center' }}>
+        <div style={{ width:52, height:52, borderRadius:26, background:'rgba(255,255,255,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+          <Ic n="user" s={26} c="rgba(255,255,255,0.8)" />
+        </div>
+        <div>
+          <div style={{ fontSize:18, fontWeight:900, color:'white' }}>Pacôme HAZOUARD</div>
+          <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)', marginTop:2 }}>Commercial agricole · AgriCorner</div>
+          <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(255,255,255,0.1)', borderRadius:6, padding:'3px 8px', marginTop:6 }}>
+            <Ic n="pin" s={11} c={G.light} />
+            <span style={{ fontSize:10, fontWeight:600, color:G.light }}>Aube (10)</span>
           </div>
-        )}
+        </div>
       </div>
+      {[['Société','AgriCorner'],['Département','Aube (10)'],['Téléphone','07 62 10 41 8'],['Email','pacome.hazouard@agricorner.com']].map(([l,v]) => (
+        <div key={l} style={{ background:'white', borderRadius:12, padding:'12px 14px', marginBottom:8, boxShadow:'0 1px 4px rgba(0,0,0,0.04)' }}>
+          <div style={{ fontSize:10, color:G.muted, fontWeight:600, textTransform:'uppercase', letterSpacing:0.8, marginBottom:2 }}>{l}</div>
+          <div style={{ fontSize:13, fontWeight:600, color:'#111' }}>{v}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-      {/* Bouton flottant */}
-      <div style={{ position:'absolute', bottom:0, left:0, right:0, height:64, background:'white', borderTop:`1px solid ${G.border}`, display:'flex', alignItems:'center', justifyContent:'center', paddingBottom:6 }}>
-        <button onClick={onNewInspection} style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 24px', borderRadius:24, background:G.primary, border:'none', cursor:'pointer', boxShadow:'0 4px 14px rgba(76,127,5,0.35)' }}>
-          <Ic n="plus" s={18} c="white" />
-          <span style={{ fontSize:13, fontWeight:800, color:'white' }}>Nouvelle inspection</span>
-        </button>
+/* ══════════════════════════════════
+   HOME (conteneur bottom-nav)
+══════════════════════════════════ */
+function HomeScreen({ onOpenVehicle, onOpenCompany, onNewInspection }) {
+  const [tab, setTab] = useState('inspection');
+  return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
+      <div style={{ flex:1, overflow:'hidden', display:'flex', flexDirection:'column' }}>
+        {tab==='inspection'  && <InspectionTab  onOpenVehicle={onOpenVehicle} onOpenCompany={onOpenCompany} onNewInspection={onNewInspection} />}
+        {tab==='prospection' && <ProspectionTab onOpenVehicle={onOpenVehicle} onOpenCompany={onOpenCompany} />}
+        {tab==='profil'      && <ProfilTab />}
       </div>
+      {/* ── Bottom nav ── */}
+      <nav style={{ display:'flex', background:'white', borderTop:'1px solid #EBEBEB', flexShrink:0, paddingBottom:'env(safe-area-inset-bottom,0px)' }}>
+        {[
+          { k:'inspection',  l:'Inspection',  ic:'check'    },
+          { k:'prospection', l:'Prospection', ic:'trending' },
+          { k:'profil',      l:'Profil',      ic:'user'     },
+        ].map(({k,l,ic}) => (
+          <button key={k} onClick={()=>setTab(k)} style={{ flex:1, border:'none', background:'none', padding:'10px 0 8px', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3 }}>
+            <Ic n={ic} s={22} c={tab===k ? G.primary : '#C4C8C4'} />
+            <span style={{ fontSize:10, fontWeight:700, color:tab===k ? G.primary : '#C4C8C4' }}>{l}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
@@ -2131,21 +2494,21 @@ export default function App() {
   const launchInspectionFromVehicle = (veh) => {
     const catMap = { tracteur:'tracteur', moissonneuse:'moissonneuse', semoir:'autre', dechaumeur:'autre', presse:'autre', autre:'autre' };
     setMInfo({ category:catMap[veh.categorie]||'autre', brand:veh.marque, model:veh.modele, year:veh.dateMEC?veh.dateMEC.slice(-4):'', hours:'', plate:veh.plaque });
-    const co=COMPANIES.find(c=>c.id===veh.societeId);
+    const co = COMPANIES.find(c=>c.id===veh.societeId);
     if (co) setClientInfo({ firstName:co.nom, lastName:'', address:`${co.adresse}, ${co.cp} ${co.ville}`, region:null });
     go('inspection');
   };
 
   return (
     <div className="screen-enter" key={screen} style={{ display:'flex', flexDirection:'column', flex:1, overflow:'hidden', position:'relative' }}>
-      {screen==='home'       && <SearchScreen    onOpenVehicle={p=>{setSelPlaque(p);go('vehicle');}} onOpenCompany={id=>{setSelCompany(id);go('company');}} onNewInspection={()=>go('client')} />}
-      {screen==='vehicle'    && <VehicleScreen   plaque={selPlaque} onBack={()=>go('home')} onLaunchInspection={launchInspectionFromVehicle} />}
-      {screen==='company'    && <CompanyScreen   companyId={selCompany} onBack={()=>go('home')} onOpenVehicle={p=>{setSelPlaque(p);go('vehicle');}} />}
-      {screen==='client'     && <ClientScreen    onBack={()=>go('home')} onNext={d=>{setClientInfo(d);go('id');}} />}
-      {screen==='id'         && <IdScreen        dbs={dbs} onBack={()=>go('client')} onNext={d=>{setMInfo(d);go('inspection');}} />}
+      {screen==='home'       && <HomeScreen       onOpenVehicle={p=>{setSelPlaque(p);go('vehicle');}} onOpenCompany={id=>{setSelCompany(id);go('company');}} onNewInspection={()=>go('client')} />}
+      {screen==='vehicle'    && <VehicleScreen    plaque={selPlaque} onBack={()=>go('home')} onLaunchInspection={launchInspectionFromVehicle} />}
+      {screen==='company'    && <CompanyScreen    companyId={selCompany} onBack={()=>go('home')} onOpenVehicle={p=>{setSelPlaque(p);go('vehicle');}} />}
+      {screen==='client'     && <ClientScreen     onBack={()=>go('home')} onNext={d=>{setClientInfo(d);go('id');}} />}
+      {screen==='id'         && <IdScreen         dbs={dbs} onBack={()=>go('client')} onNext={d=>{setMInfo(d);go('inspection');}} />}
       {screen==='inspection' && <InspectionScreen machineInfo={mInfo} onBack={()=>go(mInfo?.plate?'vehicle':'id')} onNext={d=>{setInspData(d);go('visite');}} />}
-      {screen==='visite'     && <VisiteScreen    machineInfo={mInfo} onBack={()=>go('inspection')} onNext={d=>{setVisData(d);go('annonce');}} />}
-      {screen==='annonce'    && <AnnonceScreen   machineInfo={mInfo} clientInfo={clientInfo} inspection={inspData} visite={visData} onBack={()=>go('visite')} onHome={()=>go('home')} />}
+      {screen==='visite'     && <VisiteScreen     machineInfo={mInfo} onBack={()=>go('inspection')} onNext={d=>{setVisData(d);go('annonce');}} />}
+      {screen==='annonce'    && <AnnonceScreen    machineInfo={mInfo} clientInfo={clientInfo} inspection={inspData} visite={visData} onBack={()=>go('visite')} onHome={()=>go('home')} />}
     </div>
   );
 }
