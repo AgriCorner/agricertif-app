@@ -77,6 +77,13 @@ const Ic = ({ n, s = 20, c = 'currentColor', style = {} }) => {
     spray:   <><path d="M3 7h5v12H3z" stroke={c} strokeWidth="1.7" fill="none" strokeLinejoin="round"/><path d="M8 11h4" stroke={c} strokeWidth="1.7" strokeLinecap="round"/><circle cx="16" cy="8" r="1.2" fill={c}/><circle cx="19" cy="11" r="1.2" fill={c}/><circle cx="16" cy="14" r="1.2" fill={c}/><circle cx="13" cy="7" r="1.2" fill={c}/><circle cx="13" cy="15" r="1.2" fill={c}/></>,
     lift:    <><path d="M4 21V9l6-6h10v18H4z" stroke={c} strokeWidth="1.7" fill="none" strokeLinejoin="round"/><path d="M10 3v6H4" stroke={c} strokeWidth="1.7" fill="none"/><rect x="7" y="14" width="6" height="7" stroke={c} strokeWidth="1.5" fill="none"/></>,
     tag:     <><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" stroke={c} strokeWidth="1.7" fill="none" strokeLinejoin="round"/><circle cx="7" cy="7" r="1.5" fill={c}/></>,
+    search:  <><circle cx="11" cy="11" r="8" stroke={c} strokeWidth="1.8" fill="none"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke={c} strokeWidth="1.8" strokeLinecap="round"/></>,
+    building:<><rect x="3" y="3" width="18" height="18" rx="1.5" stroke={c} strokeWidth="1.7" fill="none"/><path d="M9 21V12h6v9" stroke={c} strokeWidth="1.5" fill="none"/><rect x="7" y="5" width="3" height="3" stroke={c} strokeWidth="1.3" fill="none"/><rect x="14" y="5" width="3" height="3" stroke={c} strokeWidth="1.3" fill="none"/></>,
+    chart:   <><line x1="18" y1="20" x2="18" y2="10" stroke={c} strokeWidth="2" strokeLinecap="round"/><line x1="12" y1="20" x2="12" y2="4" stroke={c} strokeWidth="2" strokeLinecap="round"/><line x1="6" y1="20" x2="6" y2="14" stroke={c} strokeWidth="2" strokeLinecap="round"/><line x1="2" y1="20" x2="22" y2="20" stroke={c} strokeWidth="1.5" strokeLinecap="round"/></>,
+    id:      <><rect x="2" y="5" width="20" height="14" rx="2" stroke={c} strokeWidth="1.7" fill="none"/><circle cx="8" cy="12" r="2.5" stroke={c} strokeWidth="1.4" fill="none"/><path d="M13 9h5M13 12h5M13 15h3" stroke={c} strokeWidth="1.4" strokeLinecap="round"/></>,
+    map:     <><polygon points="1,6 1,22 8,18 16,22 23,18 23,2 16,6 8,2" stroke={c} strokeWidth="1.6" fill="none" strokeLinejoin="round"/><line x1="8" y1="2" x2="8" y2="18" stroke={c} strokeWidth="1.4" strokeLinecap="round"/><line x1="16" y1="6" x2="16" y2="22" stroke={c} strokeWidth="1.4" strokeLinecap="round"/></>,
+    euro:    <><circle cx="12" cy="12" r="9" stroke={c} strokeWidth="1.7" fill="none"/><path d="M15 8.5a4 4 0 100 7M8 11h7M8 13h7" stroke={c} strokeWidth="1.6" strokeLinecap="round" fill="none"/></>,
+    trending:<><polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/><polyline points="17,6 23,6 23,12" stroke={c} strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></>,
   };
   return <svg width={s} height={s} viewBox="0 0 24 24" style={style}>{paths[n] || null}</svg>;
 };
@@ -1345,949 +1352,800 @@ function AnnonceScreen({ machineInfo, clientInfo, inspection, visite, onBack, on
   );
 }
 
+
 /* ══════════════════════════════════
-   LISTING PREMIUM — JD 6530
+   DONNÉES DÉMO
 ══════════════════════════════════ */
-function ListingScreen({ onBack }) {
-  const [imgIdx,   setImgIdx]   = useState(0);
-  const [showTour, setShowTour] = useState(false);
-  const touchX = useRef(null);
+const COMPANIES = [
+  {
+    id: 'scea-grande-rue',
+    nom: 'SCEA LA GRANDE RUE',
+    siret: '42097881900027',
+    adresse: '9 ROUTE DE PRUNAY',
+    cp: '10350',
+    ville: 'ST FLAVY',
+    activite: '0111Z — Culture céréales, légumineuses, oléagineux',
+    catJuridique: 'Société civile d\'exploitation agricole',
+    salaries: '0 salarié',
+    contacts: 0,
+    plaques: ['DS134ST', 'GZ969SL', 'FM459QP'],
+  },
+  {
+    id: 'earl-plateau',
+    nom: 'EARL DU PLATEAU',
+    siret: '38450120100024',
+    adresse: '14 RUE DES CHAMPS',
+    cp: '10160',
+    ville: 'LUSIGNY-SUR-BARSE',
+    activite: '0111Z — Culture céréales',
+    catJuridique: 'Exploitation agricole à responsabilité limitée',
+    salaries: '2 salariés',
+    contacts: 1,
+    plaques: ['AB123CD', 'EF456GH', 'IJ789KL', 'MN012OP', 'QR345ST'],
+  },
+  {
+    id: 'gaec-3-chenes',
+    nom: 'GAEC DES 3 CHÊNES',
+    siret: '51234567800012',
+    adresse: '7 CHEMIN DU MOULIN',
+    cp: '10000',
+    ville: 'TROYES',
+    activite: '0111Z — Culture céréales',
+    catJuridique: 'Groupement agricole d\'exploitation en commun',
+    salaries: '3 salariés',
+    contacts: 2,
+    plaques: ['UV678WX', 'YZ901AB', 'CD234EF', 'GH567IJ', 'KL890MN', 'OP123QR', 'ST456UV', 'WX789YZ'],
+  },
+];
 
-  const images = [
-    '/jd6530-side.png',
-    '/jd6530-front.png',
-    '/jd6530-img3.png',
-    '/jd6530-img4.png',
-    '/jd6530-img5.png',
-    '/jd6530-img6.png',
-    '/jd6530-img7.png',
-  ];
+const VEHICLES = {
+  'DS134ST': {
+    plaque: 'DS134ST', marque: 'JOHN DEERE', modele: '6150R',
+    categorie: 'tracteur', dateCG: '18/06/2025', dateMEC: '25/06/2015',
+    poidsKg: 11300, no: 'O', financement: 'ACH', vin: '1L06150RVFP828135',
+    societeId: 'scea-grande-rue', couleur: 'Vert / Noir',
+    specs: {
+      moteur: [
+        ['Puissance nominale', '150 ch / 110 kW'],
+        ['Puissance (Surpuissance Active)', '170 ch / 125 kW'],
+        ['Couple max', '702 Nm à 1 600 tr/min'],
+        ['Cylindres / Cylindrée', '6 cyl. / 6,8 L'],
+        ['Type moteur', 'PowerTech PVX 4V-CR'],
+        ['Post-traitement', 'DOC + DPF (sans additif urée)'],
+      ],
+      transmission: [
+        ['Transmissions dispo.', 'PowrQuad Plus / AutoPowr / DirectDrive'],
+        ['Rapports std', '20 AV / 20 AR'],
+        ['Plage de vitesse', '2,5 – 40 km/h'],
+        ['Suspension pont AV', 'TLS triple bras (100 mm)'],
+      ],
+      hydraulique: [
+        ['Débit nominal', '114 l/min (option 155 l/min)'],
+        ['Distributeurs max', '4 + 3'],
+        ['Attelage AR catégorie', 'Cat. III'],
+        ['Capacité levage AR', '8 100 kg'],
+      ],
+      dimensions: [
+        ['Longueur de transport', '4,93 m'],
+        ['Largeur de transport', '2,49 m'],
+        ['Hauteur de transport', '2,95 m'],
+        ['Poids technique', '6 195 kg'],
+        ['Poids CG (avec chargeur)', '11 300 kg'],
+        ['Vitesse max', '40 km/h'],
+        ['Pneus AR', '520/85R38'],
+        ['Pneus AV', '480/70R28'],
+      ],
+      equipements: [
+        ['Cabine ComfortView', '✓'], ['Climatisation', '✓'],
+        ['ISOBUS', '✓'], ['Hydraulique avant', '✗'],
+        ['Prise de force avant', '✗'], ['Freinage pneumatique', '✗'],
+      ],
+    },
+    marche: {
+      prixCatalogue: 102997, heuresMoyennes: 600,
+      valeursLectura: [
+        { annee: 2014, achat: 43500, vente: 47900 },
+        { annee: 2013, achat: 41900, vente: 46100 },
+        { annee: 2012, achat: 40300, vente: 44300 },
+      ],
+      transactionsConcess: [
+        { annee: 2020, hm: 4200, prixNeuf: 98000, prixAnnonce: 52000, prixVendu: 49500 },
+        { annee: 2019, hm: 5800, prixNeuf: 95000, prixAnnonce: 45000, prixVendu: 42000 },
+        { annee: 2018, hm: 7200, prixNeuf: 92000, prixAnnonce: 39000, prixVendu: 37500 },
+      ],
+    },
+  },
+  'GZ969SL': {
+    plaque: 'GZ969SL', marque: 'HORSCH', modele: 'PRONTO 6 AS',
+    categorie: 'semoir', dateCG: '16/10/2024', dateMEC: '16/10/2024',
+    poidsKg: 13000, no: 'N', financement: 'ACH', vin: 'WH31007ZZRSZA2452',
+    societeId: 'scea-grande-rue', couleur: 'Blanc / Jaune',
+    specs: {
+      travail: [
+        ['Largeur de travail', '6,00 m'],
+        ['Interrang', '15 cm'],
+        ['Nbre d\'éléments semeurs', '40 TurboDisc'],
+        ['Profondeur de semis', 'Réglage hydraulique continu'],
+        ['Vitesse de travail', '10 – 20 km/h'],
+        ['Puissance requise', '130–185 kW (180–250 ch)'],
+      ],
+      tremie: [
+        ['Capacité simple cuve', '3 500 L'],
+        ['Capacité double cuve', '5 000 L (répartition 40:60)'],
+        ['Microgranulateur', '250 L'],
+        ['Hauteur de remplissage', '2,70 m (simple) / 2,95 m (double)'],
+      ],
+      dimensions: [
+        ['Largeur de transport', '2,95 m'],
+        ['Hauteur de transport', '4,00 m'],
+        ['Longueur (éléments semeurs)', '9,50 m'],
+        ['Longueur avec traceurs', '10,50 m'],
+        ['Poids CG', '13 000 kg'],
+        ['Pneus transport', '800/45–26.5/12 TR'],
+      ],
+      connexion: [
+        ['ISOBUS', '✓'], ['HorschConnect Telematics', '✓ (option)'],
+        ['Terminal eosT10', '✓ (option)'], ['Attelage rampe', 'Cat. II/III'],
+      ],
+    },
+    marche: {
+      prixCatalogue: 87000, heuresMoyennes: null,
+      valeursLectura: [],
+      transactionsConcess: [
+        { annee: 2022, hm: null, prixNeuf: 82000, prixAnnonce: 55000, prixVendu: 52000 },
+        { annee: 2021, hm: null, prixNeuf: 78000, prixAnnonce: 49000, prixVendu: 46500 },
+      ],
+    },
+  },
+  'FM459QP': {
+    plaque: 'FM459QP', marque: 'LEMKEN', modele: 'RUBIN 9',
+    categorie: 'dechaumeur', dateCG: '26/12/2019', dateMEC: '22/12/2019',
+    poidsKg: 5900, no: 'O', financement: 'ACH', vin: 'R9SF393983',
+    societeId: 'scea-grande-rue', couleur: 'Bleu / Gris',
+    specs: {
+      travail: [
+        ['Largeur de travail', '300 – 600 cm'],
+        ['Profondeur min / max', '2 cm / 12 cm'],
+        ['Distance entre points de gravité', '125 cm'],
+        ['Vitesse de travail', '10 – 16 km/h'],
+        ['Puissance requise', '110–191 kW (150–260 ch)'],
+      ],
+      dimensions: [
+        ['Longueur', '285 cm'],
+        ['Largeur de transport', '300 cm'],
+        ['Hauteur max', '186 cm'],
+        ['Poids CG', '5 900 kg'],
+      ],
+    },
+    marche: {
+      prixCatalogue: 38000, heuresMoyennes: null,
+      valeursLectura: [],
+      transactionsConcess: [
+        { annee: 2021, hm: null, prixNeuf: 35000, prixAnnonce: 22000, prixVendu: 20500 },
+      ],
+    },
+  },
+  'AB123CD': { plaque: 'AB123CD', marque: 'FENDT', modele: '724 VARIO', categorie: 'tracteur', dateMEC: '15/03/2019', poidsKg: 9200, no: 'O', financement: 'ACH', societeId: 'earl-plateau', specs: {}, marche: { prixCatalogue: 0, valeursLectura: [], transactionsConcess: [] } },
+  'EF456GH': { plaque: 'EF456GH', marque: 'JOHN DEERE', modele: 'W650', categorie: 'moissonneuse', dateMEC: '12/07/2017', poidsKg: 14800, no: 'O', financement: 'ACH', societeId: 'earl-plateau', specs: {}, marche: { prixCatalogue: 0, valeursLectura: [], transactionsConcess: [] } },
+  'IJ789KL': { plaque: 'IJ789KL', marque: 'AMAZONE', modele: 'CATROS 6001', categorie: 'dechaumeur', dateMEC: '05/09/2020', poidsKg: 4100, no: 'N', financement: 'ACH', societeId: 'earl-plateau', specs: {}, marche: { prixCatalogue: 0, valeursLectura: [], transactionsConcess: [] } },
+  'MN012OP': { plaque: 'MN012OP', marque: 'FENDT', modele: '516 VARIO', categorie: 'tracteur', dateMEC: '28/02/2022', poidsKg: 7800, no: 'N', financement: 'ACH', societeId: 'earl-plateau', specs: {}, marche: { prixCatalogue: 0, valeursLectura: [], transactionsConcess: [] } },
+  'QR345ST': { plaque: 'QR345ST', marque: 'KUHN', modele: 'FB 3130', categorie: 'presse', dateMEC: '14/10/2018', poidsKg: 3400, no: 'O', financement: 'ACH', societeId: 'earl-plateau', specs: {}, marche: { prixCatalogue: 0, valeursLectura: [], transactionsConcess: [] } },
+};
 
-  const prev = () => setImgIdx(i => (i - 1 + images.length) % images.length);
-  const next = () => setImgIdx(i => (i + 1) % images.length);
+const PROSPECTION_DATA = {
+  departement: 'Aube (10)',
+  surface: '328 000 ha céréales',
+  totalMachines: 4280,
+  segmentCible: '150–250 ch', partSegment: 62,
+  topMarques: {
+    tracteur:     [{ m:'John Deere',p:35},{m:'Fendt',p:25},{m:'New Holland',p:18},{m:'Case IH',p:12},{m:'Autres',p:10}],
+    moissonneuse: [{ m:'John Deere',p:42},{m:'CLAAS',p:30},{m:'New Holland',p:20},{m:'Autres',p:8}],
+    semoir:       [{ m:'Horsch',p:28},{m:'Väderstad',p:22},{m:'Kuhn',p:20},{m:'Amazone',p:18},{m:'Autres',p:12}],
+  },
+  opportunites: [
+    { type:'tracteur',    count:187, desc:'Tracteurs JD + Fendt > 5 ans (150–250 ch)' },
+    { type:'moissonneuse',count:43,  desc:'Moissonneuses > 7 ans à renouveler' },
+    { type:'semoir',      count:92,  desc:'Semoirs pneumatiques ancienne génération' },
+  ],
+  prospects: [
+    { id:'earl-plateau',    nom:'EARL DU PLATEAU',    ville:'LUSIGNY-SUR-BARSE',  parc:5, cible:'Tracteur 200 ch',      contacted:false },
+    { id:'gaec-3-chenes',   nom:'GAEC DES 3 CHÊNES',  ville:'TROYES',             parc:8, cible:'Semoir 6 m',          contacted:false },
+    { id:'scea-grande-rue', nom:'SCEA LA GRANDE RUE', ville:'ST FLAVY',           parc:3, cible:'Renouvellement tract.',contacted:true  },
+    { id:null, nom:'SAS AGRI DU LAC',                  ville:'BRIENNE-LE-CHÂTEAU', parc:10,cible:'Moissonneuse',        contacted:false },
+    { id:null, nom:'GAEC DE LA PLAINE',                ville:'BAR-SUR-AUBE',       parc:6, cible:'Tracteur 150 ch',     contacted:false },
+  ],
+};
 
-  const specs = [
-    ['Puissance',     '120 ch (+ 20 ch PDF)'],
-    ['Moteur',        'PowerTech Plus Tier 3'],
-    ['Cylindres',     '6 · 6 788 cm³'],
-    ['Couple max',    '504 N.m à 1 700 tr/min'],
-    ['Alimentation',  'Turbo géométrie variable'],
-    ['Transmission',  'PowrQuad Plus 24/24'],
-    ['Direction',     'Hydrostatique. R 5,10 m'],
-    ['Pneus AV',      '16.9 R24'],
-    ['Pneus AR',      '18.4 R38'],
-    ['Relevage',      '6,62 t. Cat. III N'],
-    ['Pompe hyd.',    '110 l/min. 200 bar'],
-    ['Poids',         '5 080 kg. PTAC 9 500 kg'],
-    ['Réservoir',     '250 L. Vidange 500 h'],
-    ['Empattement',   '2,65 m. Larg. 2,31 m'],
-    ['PTO arrière',   '540 / 540E / 1 000 tr/min'],
-    ['Électrique',    'Alternat. 115 A. 154 Ah'],
-  ];
+const CAT_META = {
+  tracteur:     { label:'Tracteur',     color:'#4C7F05', bg:'#EBF4E1', icon:'tractor'  },
+  moissonneuse: { label:'Moissonneuse', color:'#D4681A', bg:'#FBF0E7', icon:'wheat'    },
+  semoir:       { label:'Semoir',       color:'#1A7FC4', bg:'#E3F2FD', icon:'seeder'   },
+  dechaumeur:   { label:'Déchaumeur',   color:'#7B5EA7', bg:'#F0EAF8', icon:'harrow'   },
+  presse:       { label:'Presse',       color:'#B8860B', bg:'#FEF9E7', icon:'bale'     },
+  autre:        { label:'Autre',        color:'#5C6B4E', bg:'#F0F2EE', icon:'truck'    },
+};
 
-  const inspSections = [
-    { id: 'moteur', label: 'Moteur & alimentation', icon: 'engine', items: [
-      { ok: 'ok',   label: 'Démarrage à froid',         txt: 'Démarrage immédiat sans aide. Montée en T° régulière, aucun plat de courbe.' },
-      { ok: 'ok',   label: 'Gaz d\'échappement',         txt: 'Fumées incolores à chaud dans toutes les conditions. Aucune fumée bleue ou noire.' },
-      { ok: 'ok',   label: 'Acoustique moteur',          txt: 'Aucun cognement, sifflement ou vibration anormale à froid, à chaud et en charge.' },
-      { ok: 'ok',   label: 'Niveau et pression d\'huile',txt: 'Indicateur en zone verte. Huile propre. Vidange effectuée à 6 200 h, soit 332 h avant cette inspection.' },
-      { ok: 'ok',   label: 'Climatisation cabine',       txt: 'Refroidissement efficace. Filtre à pollen remplacé lors de cette inspection. Consigne atteinte en 3 min.' },
-    ]},
-    { id: 'transmission', label: 'Transmission & mobilité', icon: 'wheel', items: [
-      { ok: 'ok',   label: 'Boîte PowrQuad Plus',        txt: 'Passages sous charge fluides sur les 4 plages. 24 rapports AV et 24 AR confirmés à tous régimes.' },
-      { ok: 'ok',   label: '4 roues motrices',           txt: 'Engagement et désengagement 4RM instantanés sans choc. Différentiel de pont avant sans jeu.' },
-      { ok: 'ok',   label: 'Embrayage',                  txt: 'Course nominale, patinage nul à pleine charge. Longévité assurée.', metric: '<35 %', metricLabel: 'Usure estimée', metricOk: true },
-      { ok: 'ok',   label: 'Inverseur PowerReverser',    txt: 'Réponse immédiate en manœuvre. Aucun à-coup ni choc à l\'inversion, en charge ou hors charge.' },
-    ]},
-    { id: 'hydraulique', label: 'Hydraulique & attelage', icon: 'drop', items: [
-      { ok: 'ok',   label: 'Circuit haute pression',     txt: 'Aucune fuite sur flexibles et raccords. Pression 200 bar confirmée.' },
-      { ok: 'ok',   label: 'Distributeurs électrohyd.',  txt: '4 distributeurs opérationnels. Débit 110 l/min vérifié. Commandes ergonomiques fonctionnelles.' },
-      { ok: 'warn', label: 'Relevage arrière',           txt: 'Opérationnel au quotidien. Valve de régulation à contrôler.', metric: '95 %', metricLabel: 'Course atteinte', metricOk: false },
-      { ok: 'ok',   label: 'Attelage 3 points Cat. III', txt: 'Crochets de stabilisation sans jeu. Capacité 6,62 t confirmée en charge statique.' },
-    ]},
-    { id: 'cabine', label: 'Cabine & électronique', icon: 'seat', items: [
-      { ok: 'ok',   label: 'Instrumentation et compteur',txt: 'Tableau de bord sans défaut actif. Compteur certifié lors de l\'inspection.', metric: '6 532 h', metricLabel: 'Certifié', metricOk: true },
-      { ok: 'ok',   label: 'Éclairage intégral',         txt: 'Tous feux AV/AR, rampe de travail et gyrophare opérationnels. LED de travail intactes.' },
-      { ok: 'ok',   label: 'Pré-câblage GPS et ISOBUS',  txt: 'Connecteur ISO 11783 opérationnel. Compatible StarFire 3000, 6000 et terminaux ISOBUS.' },
-      { ok: 'warn', label: 'Autoradio',                  txt: 'Module radio hors service. Accessoire non essentiel à l\'exploitation. Remplacement estimé à moins de 150 €.' },
-    ]},
-    { id: 'chassis', label: 'Châssis & carrosserie', icon: 'paint', items: [
-      { ok: 'ok',   label: 'Châssis et longerons',       txt: 'Aucune fissure, déformation ni soudure de réparation. Intégrité structurelle confirmée.' },
-      { ok: 'ok',   label: 'Capot et carénages',         txt: 'Plastiques sans fissure majeure. Cohérence des teintes conservée.', metric: '85 %', metricLabel: 'Peinture origine', metricOk: true },
-      { ok: 'ok',   label: 'Corrosion',                  txt: 'Quelques points de surface sur tablier moteur uniquement. Aucune rouille structurelle détectée.' },
-    ]},
-    { id: 'freinage', label: 'Freinage & prise de force', icon: 'bench', items: [
-      { ok: 'ok',   label: 'Frein de service',           txt: 'Freinage équilibré AV/AR. Distance d\'arrêt conforme norme R76. Pression de circuit stable.' },
-      { ok: 'ok',   label: 'Frein de stationnement',     txt: 'Maintien en pente 30 % confirmé. Câble et mécanisme en bon état, sans jeu excessif.' },
-      { ok: 'ok',   label: 'PTO 540 / 540E / 1 000',    txt: 'Les 3 régimes opérationnels et bien distincts. Arbre et accouplement sans usure détectée.' },
-    ]},
-    { id: 'pneus', label: 'Pneumatiques & jantes', icon: 'wheel', items: [
-      { ok: 'ok', label: 'Pneus AV · 16.9 R24', txt: 'Aucune bosse, coupure ni décollement. Pression 2,2 bar conforme constructeur. Jantes sans voile.', metric: '65 %', metricLabel: 'Usure', metricOk: true, wear: 65 },
-      { ok: 'ok', label: 'Pneus AR · 18.4 R38', txt: 'Profil chevron 8 mm. Jantes sans voile ni impact. Pression 1,8 bar conforme constructeur.', metric: '70 %', metricLabel: 'Usure', metricOk: true, wear: 70 },
-    ]},
-  ];
-  const totalItems = inspSections.reduce((a, s) => a + s.items.length, 0);
-  const warnItems  = inspSections.reduce((a, s) => a + s.items.filter(it => it.ok === 'warn').length, 0);
-  const okItems    = totalItems - warnItems;
+/* ══════════════════════════════════
+   FICHE VÉHICULE
+══════════════════════════════════ */
+function VehicleScreen({ plaque, onBack, onLaunchInspection }) {
+  const v = VEHICLES[plaque];
+  const company = v ? COMPANIES.find(c => c.id === v.societeId) : null;
+  const [vtab, setVtab] = useState('infos');
+
+  if (!v) return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', background:G.bg }}>
+      <BackHeader title="Matériel introuvable" onBack={onBack} />
+      <div style={{ padding:24, textAlign:'center', color:G.muted }}>Plaque <b>{plaque}</b> non trouvée.</div>
+    </div>
+  );
+
+  const cat = CAT_META[v.categorie] || CAT_META.autre;
+  const annee = v.dateMEC ? parseInt(v.dateMEC.slice(-4)) : null;
+  const age = annee ? new Date().getFullYear() - annee : null;
+
+  const SECTION_LABELS = { moteur:'Moteur', transmission:'Transmission', hydraulique:'Hydraulique', dimensions:'Dimensions & Poids', equipements:'Équipements de série', travail:'Travail', tremie:'Trémie', connexion:'Connectivité' };
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: G.bg, overflow: 'hidden' }}>
-
-      {/* ── GALERIE HERO ── */}
-      <div style={{ position: 'relative', height: 300, flexShrink: 0, background: '#111',
-                    userSelect: 'none' }}
-           onTouchStart={e => { touchX.current = e.touches[0].clientX; }}
-           onTouchEnd={e => {
-             const dx = e.changedTouches[0].clientX - (touchX.current || 0);
-             if (dx > 40) prev(); else if (dx < -40) next();
-             touchX.current = null;
-           }}>
-        <img src={images[imgIdx]} alt=""
-             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-        <div style={{ position: 'absolute', inset: 0,
-                      background: 'linear-gradient(to top,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.1) 45%,transparent 100%)' }} />
-
-        {/* Back */}
-        <button onClick={onBack} style={{ position: 'absolute', top: 'max(calc(env(safe-area-inset-top, 0px) + 14px), 16px)', left: 14,
-          width: 36, height: 36, borderRadius: 18, background: 'rgba(0,0,0,0.48)',
-          backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.12)', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Ic n="chevL" s={18} c="white" />
-        </button>
-
-        {/* Score badge — glassmorphism, légèrement plus haut */}
-        <div style={{ position: 'absolute', top: 'max(calc(env(safe-area-inset-top, 0px) + 10px), 14px)', right: 14,
-          background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(16px)',
-          borderRadius: 14, padding: '7px 13px',
-          border: '1px solid rgba(255,255,255,0.22)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.25)' }}>
-          <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.55)', fontWeight: 700,
-                        textTransform: 'uppercase', letterSpacing: 1.2 }}>Score</div>
-          <div style={{ fontSize: 25, fontWeight: 900, color: 'white', letterSpacing: '-0.5px', lineHeight: 1 }}>
-            87<span style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,0.5)' }}>/100</span>
+    <div style={{ flex:1, display:'flex', flexDirection:'column', background:G.bg, overflow:'hidden' }}>
+      {/* ── Header ── */}
+      <div style={{ background:G.dark, flexShrink:0, paddingTop:'max(calc(env(safe-area-inset-top,0px)+10px),14px)' }}>
+        <div style={{ padding:'8px 20px 0' }}>
+          <button onClick={onBack} style={{ display:'inline-flex', alignItems:'center', gap:4, background:'none', border:'none', cursor:'pointer', color:'rgba(255,255,255,0.65)' }}>
+            <Ic n="chevL" s={17} c="rgba(255,255,255,0.65)" />
+            <span style={{ fontSize:12, fontWeight:600, color:'rgba(255,255,255,0.65)' }}>Retour</span>
+          </button>
+        </div>
+        <div style={{ padding:'6px 20px 14px', display:'flex', alignItems:'flex-start', gap:14 }}>
+          <div style={{ background:'white', borderRadius:8, padding:'4px 10px', border:'2px solid rgba(255,255,255,0.2)', flexShrink:0 }}>
+            <div style={{ fontSize:9, fontWeight:800, color:'#888', letterSpacing:1.5, textTransform:'uppercase' }}>Immat.</div>
+            <div style={{ fontSize:18, fontWeight:900, color:'#111', letterSpacing:1, fontFamily:'monospace' }}>{v.plaque}</div>
+          </div>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:5, background:cat.bg, borderRadius:20, padding:'2px 8px', marginBottom:4 }}>
+              <Ic n={cat.icon} s={11} c={cat.color} />
+              <span style={{ fontSize:10, fontWeight:700, color:cat.color, textTransform:'uppercase', letterSpacing:0.8 }}>{cat.label}</span>
+            </div>
+            <div style={{ fontSize:15, fontWeight:800, color:'white' }}>{v.marque}</div>
+            <div style={{ fontSize:19, fontWeight:900, color:'white', letterSpacing:'-0.4px' }}>{v.modele}</div>
+          </div>
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:4, flexShrink:0 }}>
+            <div style={{ background:v.no==='N'?'#22C55E':'#F59E0B', color:'white', borderRadius:6, padding:'2px 7px', fontSize:10, fontWeight:800 }}>{v.no==='N'?'NEUF':'OCCASION'}</div>
+            {age !== null && <div style={{ fontSize:11, color:'rgba(255,255,255,0.5)', fontWeight:600 }}>{age} ans</div>}
           </div>
         </div>
-
-        {/* Arrows */}
-        {imgIdx > 0 && (
-          <button onClick={prev} style={{ position: 'absolute', top: '50%', left: 12,
-            transform: 'translateY(-50%)', width: 30, height: 30, borderRadius: 15,
-            background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Ic n="chevL" s={16} c="white" />
-          </button>
-        )}
-        {imgIdx < images.length - 1 && (
-          <button onClick={next} style={{ position: 'absolute', top: '50%', right: 12,
-            transform: 'translateY(-50%)', width: 30, height: 30, borderRadius: 15,
-            background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Ic n="chevR" s={16} c="white" />
-          </button>
-        )}
-
-        {/* Bloc bas : dots + titre + marketing */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 16px 14px' }}>
-
-          {/* Dots + compteur */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        gap: 5, marginBottom: 10, position: 'relative' }}>
-            {images.map((_, i) => (
-              <div key={i} onClick={() => setImgIdx(i)} style={{
-                width: i === imgIdx ? 20 : 5, height: 5, borderRadius: 3,
-                background: i === imgIdx ? 'white' : 'rgba(255,255,255,0.3)',
-                cursor: 'pointer', transition: 'width 0.3s ease',
-              }} />
-            ))}
-            <div style={{ position: 'absolute', right: 0, fontSize: 10, fontWeight: 700,
-                          color: 'rgba(255,255,255,0.6)',
-                          background: 'rgba(0,0,0,0.3)', borderRadius: 20, padding: '2px 7px' }}>
-              {imgIdx + 1} / {images.length}
-            </div>
-          </div>
-
-          {/* Titre */}
-          <div style={{ fontSize: 22, fontWeight: 900, color: 'white',
-                        letterSpacing: '-0.5px', lineHeight: 1.1, marginBottom: 6 }}>
-            John Deere 6530 Premium
-          </div>
-
-          {/* Tags specs compactes */}
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
-            {['2008', '6 532 h', '4RM', 'PowrQuad Plus'].map(tag => (
-              <div key={tag} style={{ padding: '2px 8px',
-                background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(6px)',
-                borderRadius: 20, border: '1px solid rgba(255,255,255,0.15)',
-                fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.85)' }}>{tag}</div>
-            ))}
-          </div>
-
-          {/* Accroche marketing */}
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.65)', lineHeight: 1.5,
-                        fontStyle: 'italic', letterSpacing: '0.1px' }}>
-            Moteur certifié sain · Transmission irréprochable · Prêt à travailler
-          </div>
+        <div style={{ display:'flex', borderTop:'1px solid rgba(255,255,255,0.1)' }}>
+          {[['infos','Infos'],['tech','Fiche tech.'],['marche','Marché']].map(([k,l]) => (
+            <button key={k} onClick={()=>setVtab(k)} style={{ flex:1, background:'none', border:'none', cursor:'pointer', padding:'10px 0', fontSize:12, fontWeight:700, color:vtab===k?'white':'rgba(255,255,255,0.4)', borderBottom:vtab===k?`2px solid ${G.light}`:'2px solid transparent' }}>{l}</button>
+          ))}
         </div>
       </div>
 
-      {/* ── SCROLL BODY ── */}
-      <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 20 }}>
+      <div style={{ flex:1, overflowY:'auto', padding:'14px 16px', paddingBottom:84 }}>
 
-        {/* Prix + réf */}
-        <div style={{ background: 'white', padding: '14px 18px 12px',
-                      borderBottom: `1px solid ${G.border}` }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <div style={{ fontSize: 30, fontWeight: 900, color: G.dark, letterSpacing: '-1px' }}>
-                49 000 €
-              </div>
-              <div style={{ fontSize: 11, color: G.muted, marginTop: 1 }}>
-                Réf. AgriAffaires #46642660 · Inspecté le 18/02/2026
-              </div>
+        {/* INFOS */}
+        {vtab==='infos' && <>
+          {company && (
+            <div style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:10, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Propriétaire</div>
+              <div style={{ fontSize:14, fontWeight:800, color:'#111' }}>{company.nom}</div>
+              <div style={{ fontSize:12, color:G.muted, marginTop:2 }}>{company.adresse}, {company.cp} {company.ville}</div>
+              <div style={{ fontSize:11, color:G.muted, marginTop:2 }}>SIRET : {company.siret}</div>
+              <div style={{ fontSize:11, color:G.muted, marginTop:1 }}>{company.activite}</div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ padding: '5px 12px', background: '#EBF4E1', borderRadius: 20,
-                            fontSize: 11, fontWeight: 800, color: G.primary }}>
-                ✓ Rapport complet
+          )}
+          <div style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:10, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Carte grise</div>
+            {[
+              ['Date carte grise', v.dateCG || '—'],
+              ['1ère mise en circulation', v.dateMEC || '—'],
+              ['Neuf / Occasion', v.no==='N'?'Neuf':'Occasion'],
+              ['Financement', v.financement==='ACH'?'Achat':v.financement],
+              ['Poids (CG)', `${v.poidsKg?.toLocaleString('fr')} kg`],
+              ['Couleur', v.couleur || '—'],
+              ['N° VIN', v.vin || '—'],
+            ].map(([l,val]) => (
+              <div key={l} style={{ display:'flex', justifyContent:'space-between', padding:'5px 0', borderBottom:'1px solid #F3F3F3', gap:8 }}>
+                <span style={{ fontSize:12, color:G.muted, fontWeight:500 }}>{l}</span>
+                <span style={{ fontSize:12, fontWeight:700, color:'#111', textAlign:'right', wordBreak:'break-all', maxWidth:'55%' }}>{val}</span>
               </div>
-            </div>
+            ))}
           </div>
-        </div>
+        </>}
 
-        {/* ── VISITE 360° ── */}
-        {!showTour ? (
-          <div style={{ margin: '14px 14px 0',
-                        background: `linear-gradient(135deg,${G.dark} 0%,#2A6B2A 100%)`,
-                        borderRadius: 16, overflow: 'hidden', position: 'relative',
-                        boxShadow: '0 6px 24px rgba(16,68,16,0.25)' }}>
-            <img src={`${BASE}jd6530-side.png`} alt=""
-                 style={{ width: '100%', height: 110, objectFit: 'cover', opacity: 0.25, display: 'block' }} />
-            <div style={{ position: 'absolute', inset: 0, display: 'flex',
-                          alignItems: 'center', gap: 16, padding: '0 20px' }}>
-              <div style={{ width: 52, height: 52, borderRadius: 16,
-                            background: 'rgba(255,255,255,0.15)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            border: '1.5px solid rgba(255,255,255,0.2)', flexShrink: 0 }}>
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="white" strokeWidth="1.5"/>
-                  <path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20" stroke="white" strokeWidth="1.3" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: 'white', letterSpacing: '-0.2px' }}>
-                    Visite virtuelle 360°
-                  </div>
-                  <div style={{ padding: '2px 8px', borderRadius: 20, fontSize: 9, fontWeight: 700,
-                                background: '#EBF4E1', color: G.primary }}>
-                    ✓ Terminée
-                  </div>
-                </div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>
-                  Explorez chaque détail du tracteur
-                </div>
-              </div>
-              <button onClick={() => setShowTour(true)}
-                      style={{ padding: '9px 16px', background: 'rgba(255,255,255,0.18)',
-                               border: '1.5px solid rgba(255,255,255,0.3)', borderRadius: 12,
-                               color: 'white', fontSize: 12, fontWeight: 800, cursor: 'pointer',
-                               backdropFilter: 'blur(6px)', flexShrink: 0 }}>
-                Lancer →
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div style={{ margin: '14px 14px 0', borderRadius: 16, overflow: 'hidden',
-                        position: 'relative', boxShadow: '0 6px 24px rgba(0,0,0,0.18)' }}>
-            <button onClick={() => setShowTour(false)}
-                    style={{ position: 'absolute', top: 10, right: 10, zIndex: 10,
-                             width: 30, height: 30, borderRadius: 15,
-                             background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(8px)',
-                             border: 'none', cursor: 'pointer', color: 'white', fontSize: 14,
-                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                             fontWeight: 700 }}>×</button>
-            <iframe
-              src="https://pacome-hazouard.github.io/6530p-agritour-360-agricorner/"
-              style={{ width: '100%', height: 240, border: 'none', display: 'block' }}
-              allow="fullscreen; xr-spatial-tracking"
-              title="Visite 360° John Deere 6530 Premium"
-            />
-          </div>
-        )}
-
-        {/* ── RAPPORT D'INSPECTION ── */}
-        <div style={{ margin: '14px 14px 0' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: G.muted,
-                        textTransform: 'uppercase', letterSpacing: 1.8, marginBottom: 10 }}>
-            Rapport d'inspection
-          </div>
-
-          {/* Synthèse score */}
-          <div style={{ background: 'white', borderRadius: 16, padding: '16px',
-                        marginBottom: 10, boxShadow: '0 1px 8px rgba(0,0,0,0.05)',
-                        display: 'flex', gap: 14, alignItems: 'center' }}>
-            {/* Cercle score */}
-            <div style={{ flexShrink: 0, width: 68, height: 68, borderRadius: 34,
-                          background: 'conic-gradient(#4C7F05 0% 87%, #E8EEE0 87% 100%)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: 52, height: 52, borderRadius: 26, background: 'white',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ fontSize: 18, fontWeight: 900, color: G.dark, lineHeight: 1 }}>87</div>
-                <div style={{ fontSize: 8, color: G.muted, fontWeight: 600, letterSpacing: 0.5 }}>/100</div>
-              </div>
-            </div>
-            {/* Stats */}
-            <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-              <div style={{ background: '#EBF4E1', borderRadius: 10, padding: '8px 10px' }}>
-                <div style={{ fontSize: 18, fontWeight: 900, color: G.primary }}>{okItems}</div>
-                <div style={{ fontSize: 9, color: G.primary, fontWeight: 700, lineHeight: 1.2 }}>Conformes</div>
-              </div>
-              <div style={{ background: '#FDF4EC', borderRadius: 10, padding: '8px 10px' }}>
-                <div style={{ fontSize: 18, fontWeight: 900, color: G.orange }}>{warnItems}</div>
-                <div style={{ fontSize: 9, color: G.orange, fontWeight: 700, lineHeight: 1.2 }}>À surveiller</div>
-              </div>
-              <div style={{ background: G.bg, borderRadius: 10, padding: '8px 10px', gridColumn: '1 / -1',
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ fontSize: 10, color: G.muted, fontWeight: 600 }}>{totalItems} points contrôlés</div>
-                <div style={{ fontSize: 10, color: G.primary, fontWeight: 700 }}>0 hors service</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Sections détaillées */}
-          {inspSections.map(sec => (
-            <div key={sec.id} style={{ marginBottom: 10 }}>
-              {/* En-tête section */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, paddingLeft: 2 }}>
-                <div style={{ width: 24, height: 24, borderRadius: 8, background: '#EBF4E1',
-                              display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Ic n={sec.icon} s={13} c={G.primary} />
-                </div>
-                <div style={{ fontSize: 11, fontWeight: 800, color: G.dark, letterSpacing: '-0.1px' }}>{sec.label}</div>
-                <div style={{ marginLeft: 'auto', fontSize: 10, color: G.muted, fontWeight: 600 }}>
-                  {sec.items.filter(it => it.ok === 'ok').length}/{sec.items.length}
-                </div>
-              </div>
-              {/* Items */}
-              <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden',
-                            boxShadow: '0 1px 8px rgba(0,0,0,0.04)' }}>
-                {sec.items.map((it, i) => (
-                  <div key={it.label} style={{
-                    padding: '12px 14px',
-                    borderBottom: i < sec.items.length - 1 ? `1px solid ${G.border}` : 'none',
-                  }}>
-                    {/* Ligne principale */}
-                    <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                      <div style={{
-                        width: 26, height: 26, borderRadius: 9, flexShrink: 0, marginTop: 1,
-                        background: it.ok === 'ok' ? '#EBF4E1' : '#FDF4EC',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}>
-                        {it.ok === 'ok'
-                          ? <Ic n="check" s={13} c={G.primary} />
-                          : <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                              <path d="M12 8v5M12 16h.01" stroke={G.orange} strokeWidth="2.2" strokeLinecap="round"/>
-                              <path d="M10.3 3.3L2.7 17A2 2 0 004.4 20h15.2a2 2 0 001.7-3L13.7 3.3a2 2 0 00-3.4 0z" stroke={G.orange} strokeWidth="1.7" fill="none"/>
-                            </svg>
-                        }
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
-                          <div style={{ fontSize: 12, fontWeight: 700, color: '#1A1A1A' }}>{it.label}</div>
-                          {/* Badge métrique */}
-                          {it.metric && (
-                            <div style={{ flexShrink: 0, textAlign: 'right' }}>
-                              <div style={{ fontSize: 14, fontWeight: 900, lineHeight: 1,
-                                color: it.metricOk !== false ? G.primary : G.orange }}>
-                                {it.metric}
-                              </div>
-                              <div style={{ fontSize: 8, fontWeight: 600, color: G.muted, marginTop: 1 }}>
-                                {it.metricLabel}
-                              </div>
-                            </div>
-                          )}
-                          {it.ok === 'warn' && !it.metric && (
-                            <div style={{ padding: '2px 8px', borderRadius: 20, background: '#FDF4EC',
-                                          fontSize: 9, fontWeight: 700, color: G.orange, flexShrink: 0 }}>
-                              Vigilance
-                            </div>
-                          )}
-                        </div>
-                        <div style={{ fontSize: 10.5, color: G.muted, lineHeight: 1.5, marginTop: 3 }}>{it.txt}</div>
-                        {/* Barre d'usure pour pneus */}
-                        {it.wear !== undefined && (
-                          <div style={{ marginTop: 7 }}>
-                            <div style={{ height: 5, borderRadius: 3, background: '#E8F0DE', overflow: 'hidden' }}>
-                              <div style={{ height: '100%', width: `${it.wear}%`, borderRadius: 3,
-                                background: it.wear <= 30 ? G.red : it.wear <= 60 ? G.orange : G.primary,
-                                transition: 'width 0.4s ease' }} />
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
-                              <div style={{ fontSize: 9, color: G.muted, fontWeight: 600 }}>Neuf</div>
-                              <div style={{ fontSize: 9, color: it.wear <= 30 ? G.red : it.wear <= 60 ? G.orange : G.primary, fontWeight: 700 }}>
-                                {it.wear} % usé
-                              </div>
-                              <div style={{ fontSize: 9, color: G.muted, fontWeight: 600 }}>HS</div>
-                            </div>
-                          </div>
-                        )}
-                        {/* Badge vigilance à côté de la barre si warn+metric */}
-                        {it.ok === 'warn' && it.metric && (
-                          <div style={{ marginTop: 5, display: 'inline-flex', padding: '2px 8px',
-                            borderRadius: 20, background: '#FDF4EC', fontSize: 9, fontWeight: 700, color: G.orange }}>
-                            Point de vigilance
-                          </div>
-                        )}
-                      </div>
-                    </div>
+        {/* FICHE TECH */}
+        {vtab==='tech' && <>
+          {Object.entries(v.specs).length === 0
+            ? <div style={{ textAlign:'center', color:G.muted, padding:40, fontSize:13 }}>Fiche technique non disponible</div>
+            : Object.entries(v.specs).map(([section, rows]) => (
+              <div key={section} style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:10, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+                <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>{SECTION_LABELS[section] || section}</div>
+                {rows.map(([l,val]) => (
+                  <div key={l} style={{ display:'flex', justifyContent:'space-between', padding:'5px 0', borderBottom:'1px solid #F3F3F3', gap:8 }}>
+                    <span style={{ fontSize:12, color:G.muted, fontWeight:500, flex:1 }}>{l}</span>
+                    <span style={{ fontSize:12, fontWeight:700, color:val==='✓'?G.primary:val==='✗'?G.red:'#111', textAlign:'right' }}>{val}</span>
                   </div>
                 ))}
               </div>
+            ))
+          }
+        </>}
+
+        {/* MARCHÉ */}
+        {vtab==='marche' && <>
+          {v.marche?.prixCatalogue > 0 && (
+            <div style={{ background:`linear-gradient(135deg, ${G.dark} 0%, ${G.primary} 100%)`, borderRadius:13, padding:'14px 16px', marginBottom:10 }}>
+              <div style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,0.5)', textTransform:'uppercase', letterSpacing:1 }}>Prix catalogue neuf</div>
+              <div style={{ fontSize:24, fontWeight:900, color:'white', marginTop:2 }}>{v.marche.prixCatalogue.toLocaleString('fr')} €</div>
+              {v.marche.heuresMoyennes && <div style={{ fontSize:11, color:'rgba(255,255,255,0.45)', marginTop:2 }}>~{v.marche.heuresMoyennes} h/an estimées</div>}
             </div>
-          ))}
-
-          {/* Commentaire expert */}
-          <div style={{ background: `linear-gradient(135deg,${G.dark} 0%,#1A6030 100%)`,
-                        borderRadius: 14, padding: '14px 16px', marginBottom: 10,
-                        boxShadow: '0 4px 16px rgba(16,68,16,0.18)' }}>
-            <div style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.45)',
-                          textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>
-              Commentaire de l'inspecteur
-            </div>
-            <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, fontStyle: 'italic' }}>
-              "Tracteur polyvalent en très bon état général pour son âge et ses heures.
-              Le moteur PowerTech Plus est particulièrement sain. Démarrage vif, silence mécanique excellent.
-              La boîte PowrQuad et les organes de transmission ne présentent aucune usure préoccupante.
-              Le relevage arrière est le seul point de vigilance. Il reste pleinement opérationnel au quotidien.
-              Je recommande ce tracteur sans réserve pour une utilisation grandes cultures ou polyculture-élevage."
-            </div>
-            <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <img src={`${BASE}pacome.jpg`} alt="" style={{ width: 28, height: 28, borderRadius: 9,
-                objectFit: 'cover', border: '1.5px solid rgba(107,163,46,0.5)' }} />
-              <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'white' }}>Pacôme HAZOUARD</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)' }}>18 février 2026</div>
+          )}
+          {v.marche?.transactionsConcess?.length > 0 && (
+            <div style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:10, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:10 }}>Ventes concession — même modèle</div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', gap:4, marginBottom:6 }}>
+                {['Année','H.M.','Annoncé','Vendu'].map(h=><div key={h} style={{ fontSize:9, fontWeight:700, color:G.muted, textTransform:'uppercase', textAlign:'center' }}>{h}</div>)}
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── FICHE TECHNIQUE ── */}
-        <div style={{ margin: '14px 14px 0' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: G.muted,
-                        textTransform: 'uppercase', letterSpacing: 1.8, marginBottom: 10 }}>
-            Fiche technique
-          </div>
-          <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden',
-                        boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}>
-            {specs.map(([l, v], i) => (
-              <div key={l} style={{
-                padding: '10px 16px', display: 'flex', justifyContent: 'space-between',
-                alignItems: 'center', gap: 12,
-                borderBottom: i < specs.length - 1 ? `1px solid ${G.border}` : 'none',
-              }}>
-                <div style={{ fontSize: 11, color: G.muted, fontWeight: 600 }}>{l}</div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: G.dark, textAlign: 'right' }}>{v}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── INSPECTOR CARD ── */}
-        <div style={{ margin: '14px 14px 0',
-                      background: `linear-gradient(135deg,${G.dark} 0%,#1A5C1A 100%)`,
-                      borderRadius: 16, padding: '16px', boxShadow: '0 4px 20px rgba(16,68,16,0.22)' }}>
-          <div style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.45)',
-                        textTransform: 'uppercase', letterSpacing: 1.8, marginBottom: 12 }}>
-            Votre inspecteur
-          </div>
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 14 }}>
-            <img src={`${BASE}pacome.jpg`} alt="Pacôme HAZOUARD"
-                 style={{ width: 58, height: 58, borderRadius: 16, objectFit: 'cover',
-                           border: '2px solid rgba(107,163,46,0.5)', flexShrink: 0 }} />
-            <div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: 'white', letterSpacing: '-0.2px' }}>
-                Pacôme HAZOUARD
-              </div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
-                Commercial chez AgriCorner
-              </div>
-              <div style={{ fontSize: 11, color: G.light, marginTop: 3, fontWeight: 600 }}>
-                Aube (10)
-              </div>
-            </div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            {[
-              { icon: 'phone', label: '07 62 10 41 8' },
-              { icon: 'mail',  label: 'pacome.hazouard@agricorner.com' },
-            ].map(({ icon, label }) => (
-              <div key={label} style={{
-                background: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: '9px 12px',
-                display: 'flex', gap: 8, alignItems: 'center',
-                border: '1px solid rgba(255,255,255,0.06)',
-              }}>
-                <Ic n={icon} s={14} c={G.light} />
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.75)', fontWeight: 600,
-                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Avertissement */}
-        <div style={{ margin: '12px 14px 0', padding: '11px 14px',
-                      background: 'white', borderRadius: 12, border: `1px solid ${G.border}` }}>
-          <div style={{ fontSize: 10, color: G.muted, lineHeight: 1.55 }}>
-            Ce rapport reflète l'état du véhicule à la date d'inspection (18/02/2026). Il ne constitue pas une garantie ni un engagement contractuel. L'inspecteur décline toute responsabilité pour des évolutions postérieures à cette date.
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════
-   ACCUEIL
-══════════════════════════════════ */
-function VentesTab({ onOpenListing }) {
-  const [section, setSection] = useState('mes');
-  const scoreColor = s => s >= 80 ? G.primary : s >= 60 ? G.gold : G.red;
-  const actives = [
-    { m: 'John Deere 6530 Premium', cat: 'Tracteur', ann: 2008, h: '6 532 h', score: 87,
-      prix: '49 000 €', vues: 312, contacts: 8, jours: 14,
-      fourch: { bas: 40000, haut: 53000, annonce: 49000 }, img: `${BASE}jd6530-side.png` },
-  ];
-  const concession = [
-    { m: 'New Holland T6.180', cat: 'Tracteur', ann: 2017, h: '3 820 h', score: 91,
-      prix: '62 000 €', agent: 'Marc D.', jours: 7, img: `${BASE}tractor-jd6530p.png` },
-    { m: 'Claas Axion 850', cat: 'Tracteur', ann: 2015, h: '5 100 h', score: 78,
-      prix: '55 500 €', agent: 'Sophie R.', jours: 21, img: `${BASE}tractor-jd6210r.jpg` },
-  ];
-  const archives = [
-    { m: 'John Deere 6630 Premium', cat: 'Tracteur', ann: 2010, h: '7 210 h', score: 82,
-      annonce: 43500, vendu: 41000, jours: 22, date: 'Nov. 2025', img: `${BASE}jd6530-side.png` },
-  ];
-  const tabs2 = [
-    { id: 'mes', l: 'Mes annonces' },
-    { id: 'concess', l: 'Concession' },
-    { id: 'archives', l: 'Archives' },
-  ];
-  const fmt = v => v.toLocaleString('fr-FR') + ' €';
-  return (
-    <div>
-      {/* Sous-nav */}
-      <div style={{ display: 'flex', borderBottom: `1px solid ${G.border}`, background: 'white', paddingTop: 4 }}>
-        {tabs2.map(t => (
-          <button key={t.id} onClick={() => setSection(t.id)}
-                  style={{ flex: 1, padding: '10px 4px', border: 'none', background: 'none',
-                           cursor: 'pointer', fontSize: 11, fontWeight: 700,
-                           color: section === t.id ? G.dark : G.muted,
-                           borderBottom: `2.5px solid ${section === t.id ? G.primary : 'transparent'}`,
-                           transition: 'all 0.2s' }}>
-            {t.l}
-          </button>
-        ))}
-      </div>
-
-      <div style={{ padding: '16px 16px' }}>
-        {/* ── MES ANNONCES ── */}
-        {section === 'mes' && (
-          <div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
-              {[
-                { v: '1', l: 'En ligne', c: G.primary, bg: '#EBF4E1' },
-                { v: '14 j', l: 'Jours en ligne', c: G.dark, bg: 'white' },
-                { v: '8', l: 'Contacts reçus', c: G.gold, bg: '#FDF8ED' },
-              ].map(k => (
-                <div key={k.l} style={{ background: k.bg, borderRadius: 12, padding: '11px 8px',
-                                       textAlign: 'center', border: `1px solid ${G.border}`,
-                                       boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                  <div style={{ fontSize: 20, fontWeight: 900, color: k.c }}>{k.v}</div>
-                  <div style={{ fontSize: 9, fontWeight: 600, color: G.muted, marginTop: 1, lineHeight: 1.3 }}>{k.l}</div>
+              {v.marche.transactionsConcess.map((t,i)=>(
+                <div key={i} style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', gap:4, padding:'6px 0', borderTop:'1px solid #F3F3F3' }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:'#111', textAlign:'center' }}>{t.annee}</div>
+                  <div style={{ fontSize:12, color:G.muted, textAlign:'center' }}>{t.hm?`${t.hm.toLocaleString('fr')} h`:'—'}</div>
+                  <div style={{ fontSize:11, color:G.muted, textAlign:'center' }}>{(t.prixAnnonce/1000).toFixed(0)}k €</div>
+                  <div style={{ fontSize:11, fontWeight:700, color:G.primary, textAlign:'center' }}>{(t.prixVendu/1000).toFixed(0)}k €</div>
                 </div>
               ))}
             </div>
-            {actives.map(a => (
-              <div key={a.m} style={{ background: 'white', borderRadius: 16, overflow: 'hidden',
-                                     boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
-                                     border: `1px solid ${G.border}`, marginBottom: 12 }}>
-                <div onClick={() => onOpenListing()}
-                     style={{ display: 'flex', gap: 12, padding: '13px 15px', cursor: 'pointer', alignItems: 'center' }}>
-                  <div style={{ width: 52, height: 52, borderRadius: 12, overflow: 'hidden', flexShrink: 0 }}>
-                    <img src={a.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>{a.m}</div>
-                    <div style={{ fontSize: 11, color: G.muted, marginTop: 1 }}>{a.ann} · {a.h} · {a.cat}</div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: 15, fontWeight: 900, color: G.dark }}>{a.prix}</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: G.gold, marginTop: 2 }}>{a.contacts} contacts</div>
-                    <div style={{ fontSize: 9, color: G.muted, marginTop: 1 }}>Score {a.score}/100</div>
-                  </div>
-                </div>
-                <div style={{ borderTop: `1px solid ${G.border}`, display: 'flex', background: G.bg }}>
-                  {[{ l: 'Vues', v: a.vues }, { l: 'Contacts', v: a.contacts }, { l: 'Jours en ligne', v: a.jours }].map((s, i) => (
-                    <div key={s.l} style={{ flex: 1, textAlign: 'center', padding: '9px 4px', borderRight: `1px solid ${G.border}` }}>
-                      <div style={{ fontSize: 16, fontWeight: 900, color: G.dark }}>{s.v}</div>
-                      <div style={{ fontSize: 9, color: G.muted, fontWeight: 500 }}>{s.l}</div>
-                    </div>
-                  ))}
-                  <div style={{ flex: 1, textAlign: 'center', padding: '9px 4px' }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: G.primary }}>✓ Positionné</div>
-                    <div style={{ fontSize: 9, color: G.muted }}>vs marché</div>
-                  </div>
-                </div>
-                <div style={{ padding: '12px 15px', borderTop: `1px solid ${G.border}` }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: G.muted, textTransform: 'uppercase', letterSpacing: 1.4, marginBottom: 8 }}>
-                    Fourchette marché · {a.cat}
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                    <div style={{ flex: 1, background: '#FBF0E7', borderRadius: 10, padding: '8px 10px', border: '1px solid #F5D9B8' }}>
-                      <div style={{ fontSize: 8, fontWeight: 700, color: G.orange, textTransform: 'uppercase', letterSpacing: 1 }}>↓ Basse</div>
-                      <div style={{ fontSize: 15, fontWeight: 900, color: '#8B4A0A' }}>{a.fourch.bas / 1000} k€</div>
-                    </div>
-                    <div style={{ flex: 1, background: '#EBF4E1', borderRadius: 10, padding: '8px 10px', border: '1px solid #C8E6A0' }}>
-                      <div style={{ fontSize: 8, fontWeight: 700, color: G.primary, textTransform: 'uppercase', letterSpacing: 1 }}>↑ Haute</div>
-                      <div style={{ fontSize: 15, fontWeight: 900, color: G.dark }}>{a.fourch.haut / 1000} k€</div>
-                    </div>
-                  </div>
-                  <div style={{ height: 6, background: '#E5E7EB', borderRadius: 99, overflow: 'visible', position: 'relative', marginBottom: 6 }}>
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right,#FBF0E7,#EBF4E1)', borderRadius: 99 }} />
-                    <div style={{ position: 'absolute',
-                                  left: `${((a.fourch.annonce - a.fourch.bas) / (a.fourch.haut - a.fourch.bas)) * 100}%`,
-                                  top: -4, width: 14, height: 14, borderRadius: 7,
-                                  background: G.dark, border: '2.5px solid white',
-                                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)', transform: 'translateX(-50%)' }} />
-                  </div>
-                  <div style={{ fontSize: 10, color: G.muted, textAlign: 'center' }}>
-                    Votre prix <strong style={{ color: G.dark }}>{a.prix}</strong> — bien positionné
-                  </div>
-                </div>
+          )}
+          {v.marche?.valeursLectura?.length > 0 && (
+            <div style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:10, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:4 }}>Valeurs résiduelles estimées</div>
+              <div style={{ fontSize:10, color:G.muted, marginBottom:10 }}>Source : Lectura Valuation</div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:4, marginBottom:6 }}>
+                {['Année','Achat','Vente'].map(h=><div key={h} style={{ fontSize:9, fontWeight:700, color:G.muted, textTransform:'uppercase', textAlign:'center' }}>{h}</div>)}
               </div>
-            ))}
-          </div>
-        )}
-
-        {/* ── CONCESSION ── */}
-        {section === 'concess' && (
-          <div>
-            <div style={{ background: '#EBF4E1', borderRadius: 12, padding: '10px 14px',
-                          marginBottom: 14, border: `1px solid #C8E6A0`, fontSize: 11, color: G.muted, lineHeight: 1.5 }}>
-              👁 Lecture seule — annonces en ligne AgriCorner
+              {v.marche.valeursLectura.map((r,i)=>(
+                <div key={i} style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:4, padding:'6px 0', borderTop:'1px solid #F3F3F3' }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:'#111', textAlign:'center' }}>{r.annee}</div>
+                  <div style={{ fontSize:11, color:G.orange, fontWeight:600, textAlign:'center' }}>{r.achat.toLocaleString('fr')} €</div>
+                  <div style={{ fontSize:11, color:G.primary, fontWeight:700, textAlign:'center' }}>{r.vente.toLocaleString('fr')} €</div>
+                </div>
+              ))}
             </div>
-            {concession.map(c => (
-              <div key={c.m} style={{ background: 'white', borderRadius: 16, overflow: 'hidden',
-                                     boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
-                                     border: `1px solid ${G.border}`, marginBottom: 10 }}>
-                <div style={{ display: 'flex', gap: 12, padding: '13px 15px', alignItems: 'center' }}>
-                  <div style={{ width: 52, height: 52, borderRadius: 12, overflow: 'hidden', flexShrink: 0, background: G.bg }}>
-                    <img src={c.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>{c.m}</div>
-                    <div style={{ fontSize: 11, color: G.muted, marginTop: 1 }}>{c.ann} · {c.h}</div>
-                    <div style={{ fontSize: 10, color: G.muted, marginTop: 2 }}>
-                      <span style={{ fontWeight: 600, color: G.primary }}>AgriCorner</span> · {c.agent}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: 15, fontWeight: 900, color: G.dark }}>{c.prix}</div>
-                    <div style={{ fontSize: 9, fontWeight: 700, color: scoreColor(c.score), marginTop: 2 }}>Score {c.score}/100</div>
-                    <div style={{ fontSize: 9, color: G.muted, marginTop: 1 }}>{c.jours} j en ligne</div>
-                  </div>
-                </div>
-                <div style={{ borderTop: `1px solid ${G.border}`, padding: '8px 15px',
-                              background: G.bg, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: 3, background: G.primary }} />
-                  <div style={{ fontSize: 10, color: G.muted }}>Inspection AgriCertif complète</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+          )}
+          {!v.marche?.prixCatalogue && !v.marche?.transactionsConcess?.length && !v.marche?.valeursLectura?.length && (
+            <div style={{ textAlign:'center', color:G.muted, padding:40, fontSize:13 }}>Données marché non disponibles</div>
+          )}
+        </>}
+      </div>
 
-        {/* ── ARCHIVES ── */}
-        {section === 'archives' && (
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: G.muted, textTransform: 'uppercase',
-                          letterSpacing: 1.8, marginBottom: 12 }}>Historique des ventes</div>
-            {archives.map(a => (
-              <div key={a.m} style={{ background: 'white', borderRadius: 16, overflow: 'hidden',
-                                     boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
-                                     border: `1px solid ${G.border}`, marginBottom: 10 }}>
-                <div style={{ display: 'flex', gap: 12, padding: '13px 15px', alignItems: 'center' }}>
-                  <div style={{ width: 52, height: 52, borderRadius: 12, overflow: 'hidden', flexShrink: 0 }}>
-                    <img src={a.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(0.3)' }} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>{a.m}</div>
-                    <div style={{ fontSize: 11, color: G.muted, marginTop: 1 }}>{a.ann} · {a.h} · {a.cat}</div>
-                    <div style={{ fontSize: 10, color: G.muted, marginTop: 2 }}>Vendu en {a.jours} j · {a.date}</div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: 9, color: G.muted, fontWeight: 500 }}>Annoncé</div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#AAA', textDecoration: 'line-through' }}>{fmt(a.annonce)}</div>
-                    <div style={{ fontSize: 15, fontWeight: 900, color: G.dark }}>{fmt(a.vendu)}</div>
-                    <div style={{ fontSize: 9, color: G.primary, fontWeight: 600 }}>Prix vendu</div>
-                  </div>
-                </div>
-                <div style={{ borderTop: `1px solid ${G.border}`, display: 'flex', background: G.bg }}>
-                  {[
-                    { l: 'Score', v: `${a.score}/100` },
-                    { l: 'Durée vente', v: `${a.jours} j` },
-                    { l: 'Écart', v: `- ${((a.annonce - a.vendu) / 1000).toFixed(1)} k€` },
-                  ].map((s, i) => (
-                    <div key={s.l} style={{ flex: 1, textAlign: 'center', padding: '9px 4px',
-                                           borderRight: i < 2 ? `1px solid ${G.border}` : 'none' }}>
-                      <div style={{ fontSize: 13, fontWeight: 800, color: G.dark }}>{s.v}</div>
-                      <div style={{ fontSize: 8, color: G.muted, fontWeight: 500 }}>{s.l}</div>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ padding: '10px 15px', borderTop: `1px solid ${G.border}`, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {['✓ Inspection', '✓ Fiche technique', '✓ Visite 360°'].map(d => (
-                    <div key={d} style={{ padding: '3px 9px', background: '#EBF4E1', borderRadius: 20, fontSize: 9, fontWeight: 700, color: G.primary }}>
-                      {d}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* CTA */}
+      <div style={{ position:'absolute', bottom:0, left:0, right:0, padding:'12px 16px', paddingBottom:'max(12px,env(safe-area-inset-bottom,0px))', background:'white', borderTop:`1px solid ${G.border}` }}>
+        <button onClick={()=>onLaunchInspection(v)} style={{ width:'100%', padding:'14px 0', borderRadius:13, background:`linear-gradient(135deg, ${G.primary}, ${G.dark})`, border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:10, boxShadow:'0 4px 16px rgba(76,127,5,0.35)' }}>
+          <Ic n="check" s={18} c="white" />
+          <span style={{ fontSize:15, fontWeight:800, color:'white' }}>Lancer l'inspection</span>
+          <Ic n="chevR" s={16} c="rgba(255,255,255,0.7)" />
+        </button>
       </div>
     </div>
   );
 }
 
-function HomeScreen({ onNewInspection, onOpenListing }) {
-  const [tab, setTab] = useState('parc');
-  const recents = [
-    { m: 'John Deere 6530 Premium', ann: '2008', h: '6 532 h', s: 'Publié', score: 87, listing: true },
-  ];
-  const parc = [
-    { m: 'John Deere 6530 Premium', ann: 2008, h: '6 532 h', cert: true },
-  ];
-  const scoreColor = s => s >= 80 ? G.primary : s >= 60 ? G.gold : G.red;
+/* ══════════════════════════════════
+   FICHE SOCIÉTÉ
+══════════════════════════════════ */
+function CompanyScreen({ companyId, onBack, onOpenVehicle }) {
+  const company = COMPANIES.find(c => c.id === companyId);
+  const vehicles = company ? (company.plaques || []).map(p=>VEHICLES[p]).filter(Boolean) : [];
+
+  if (!company) return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', background:G.bg }}>
+      <BackHeader title="Société introuvable" onBack={onBack} />
+    </div>
+  );
+
+  const catBreakdown = vehicles.reduce((acc,veh)=>{ const k=veh.categorie||'autre'; acc[k]=(acc[k]||0)+1; return acc; }, {});
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: G.bg, overflow: 'hidden' }}>
-      <div style={{ background: G.dark, paddingTop: 'max(calc(env(safe-area-inset-top, 0px) + 18px), 24px)', padding: '0 20px 20px', flexShrink: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-          <div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontWeight: 500, marginBottom: 2 }}>Bonjour,</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: 'white', letterSpacing: '-0.3px' }}>Pacôme HAZOUARD</div>
-          </div>
-          <img src={`${BASE}logo-agricertif.svg`} alt="AgriCertif" style={{ height: 26, filter: 'brightness(0) invert(1)', opacity: 0.65 }} />
+    <div style={{ flex:1, display:'flex', flexDirection:'column', background:G.bg, overflow:'hidden' }}>
+      <div style={{ background:G.dark, flexShrink:0, paddingTop:'max(calc(env(safe-area-inset-top,0px)+10px),14px)' }}>
+        <div style={{ padding:'8px 20px 0' }}>
+          <button onClick={onBack} style={{ display:'inline-flex', alignItems:'center', gap:4, background:'none', border:'none', cursor:'pointer', color:'rgba(255,255,255,0.65)' }}>
+            <Ic n="chevL" s={17} c="rgba(255,255,255,0.65)" />
+            <span style={{ fontSize:12, fontWeight:600, color:'rgba(255,255,255,0.65)' }}>Retour</span>
+          </button>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          {[['1', 'Inspections'], ['1', 'Inspectés'], ['0', 'En cours']].map(([v, l]) => (
-            <div key={l} style={{ flex: 1, background: 'rgba(255,255,255,0.08)', borderRadius: 12, padding: '10px 8px', textAlign: 'center' }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: 'white' }}>{v}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontWeight: 600, marginTop: 1 }}>{l}</div>
+        <div style={{ padding:'6px 20px 16px' }}>
+          <div style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:1.5, marginBottom:2 }}>Fiche société</div>
+          <div style={{ fontSize:20, fontWeight:900, color:'white' }}>{company.nom}</div>
+          <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:3 }}>{company.adresse} — {company.cp} {company.ville}</div>
+          <div style={{ display:'flex', gap:8, marginTop:10 }}>
+            <div style={{ background:'rgba(255,255,255,0.1)', borderRadius:8, padding:'5px 10px', display:'flex', gap:5, alignItems:'center' }}>
+              <Ic n="tractor" s={12} c="rgba(255,255,255,0.6)" />
+              <span style={{ fontSize:11, fontWeight:700, color:'white' }}>{vehicles.length} matériel{vehicles.length>1?'s':''}</span>
             </div>
+            <div style={{ background:'rgba(255,255,255,0.1)', borderRadius:8, padding:'5px 10px', display:'flex', gap:5, alignItems:'center' }}>
+              <Ic n="user" s={12} c="rgba(255,255,255,0.6)" />
+              <span style={{ fontSize:11, fontWeight:700, color:'white' }}>{company.contacts} contact{company.contacts>1?'s':''}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ flex:1, overflowY:'auto', padding:'14px 16px' }}>
+        <div style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:10, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+          <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Informations</div>
+          {[
+            ['SIRET', company.siret],
+            ['Activité', company.activite],
+            ['Catégorie juridique', company.catJuridique],
+            ['Effectif', company.salaries],
+          ].map(([l,val])=>(
+            <div key={l} style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', padding:'6px 0', borderBottom:'1px solid #F3F3F3', gap:8 }}>
+              <span style={{ fontSize:11, color:G.muted, fontWeight:500, flexShrink:0 }}>{l}</span>
+              <span style={{ fontSize:11, fontWeight:600, color:'#111', textAlign:'right', flex:1 }}>{val}</span>
+            </div>
+          ))}
+        </div>
+
+        {Object.keys(catBreakdown).length > 0 && (
+          <div style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:10, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:10 }}>Répartition du parc</div>
+            <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+              {Object.entries(catBreakdown).map(([cat,cnt])=>{
+                const meta=CAT_META[cat]||CAT_META.autre;
+                return (
+                  <div key={cat} style={{ display:'flex', alignItems:'center', gap:6, background:meta.bg, borderRadius:20, padding:'5px 10px' }}>
+                    <Ic n={meta.icon} s={13} c={meta.color} />
+                    <span style={{ fontSize:12, fontWeight:700, color:meta.color }}>{cnt} {meta.label}{cnt>1?'s':''}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8, marginTop:4 }}>Matériels ({vehicles.length})</div>
+        {vehicles.map(veh=>{
+          const meta=CAT_META[veh.categorie]||CAT_META.autre;
+          const annee=veh.dateMEC?parseInt(veh.dateMEC.slice(-4)):null;
+          const age=annee?new Date().getFullYear()-annee:null;
+          return (
+            <button key={veh.plaque} onClick={()=>onOpenVehicle(veh.plaque)} style={{ width:'100%', background:'white', border:`1.5px solid ${G.border}`, borderRadius:13, padding:'12px 14px', marginBottom:8, display:'flex', alignItems:'center', gap:12, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.04)' }}>
+              <div style={{ width:38, height:38, borderRadius:10, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <Ic n={meta.icon} s={20} c={meta.color} />
+              </div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                  <span style={{ fontSize:13, fontWeight:800, color:'#111' }}>{veh.marque} {veh.modele}</span>
+                  <span style={{ fontSize:10, background:veh.no==='N'?'#22C55E':'#F59E0B', color:'white', borderRadius:4, padding:'1px 5px', fontWeight:700 }}>{veh.no==='N'?'N':'O'}</span>
+                </div>
+                <div style={{ fontSize:11, color:G.muted, marginTop:1 }}>{veh.plaque} · {annee||'—'}{age?` (${age} ans)`:''}</div>
+              </div>
+              <Ic n="chevR" s={16} c={G.border} />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════
+   ÉCRAN RECHERCHE (Home)
+══════════════════════════════════ */
+function SearchScreen({ onOpenVehicle, onOpenCompany, onNewInspection }) {
+  const [tab,         setTab]         = useState('recherche');
+  const [searchMode,  setSearchMode]  = useState('plaque');
+  const [plateInput,  setPlateInput]  = useState('');
+  const [compInput,   setCompInput]   = useState('');
+  const [selectedCat, setSelectedCat] = useState(null);
+  const [prospCat,    setProspCat]    = useState('tracteur');
+
+  const filteredCompanies = useMemo(()=>{
+    if (!compInput.trim()) return COMPANIES;
+    const q=compInput.toLowerCase();
+    return COMPANIES.filter(c=>c.nom.toLowerCase().includes(q)||c.ville.toLowerCase().includes(q)||c.siret.includes(q));
+  }, [compInput]);
+
+  const allVehicles = useMemo(()=>Object.values(VEHICLES),[]);
+  const filteredBycat = useMemo(()=>{
+    if (!selectedCat) return [];
+    return allVehicles.filter(v=>v.categorie===selectedCat);
+  }, [selectedCat, allVehicles]);
+
+  const handlePlateLookup = () => {
+    const p=plateInput.trim().toUpperCase().replace(/[\s-]/g,'');
+    if (p && VEHICLES[p]) onOpenVehicle(p);
+  };
+
+  return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', background:G.bg }}>
+      {/* Header */}
+      <div style={{ background:G.dark, flexShrink:0, paddingTop:'max(calc(env(safe-area-inset-top,0px)+12px),16px)', paddingBottom:0 }}>
+        <div style={{ padding:'0 20px 14px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div>
+            <div style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.35)', letterSpacing:2, textTransform:'uppercase' }}>AgriCertif</div>
+            <div style={{ fontSize:22, fontWeight:900, color:'white', marginTop:1 }}>Outil commercial</div>
+          </div>
+          <Ic n="tractor" s={32} c="rgba(255,255,255,0.15)" />
+        </div>
+        <div style={{ display:'flex', borderTop:'1px solid rgba(255,255,255,0.08)' }}>
+          {[['recherche','Recherche','search'],['prospection','Prospection','chart'],['profil','Profil','user']].map(([k,l,ic])=>(
+            <button key={k} onClick={()=>setTab(k)} style={{ flex:1, background:'none', border:'none', cursor:'pointer', padding:'10px 0', display:'flex', flexDirection:'column', alignItems:'center', gap:3, borderBottom:tab===k?`2px solid ${G.light}`:'2px solid transparent' }}>
+              <Ic n={ic} s={17} c={tab===k?G.light:'rgba(255,255,255,0.3)'} />
+              <span style={{ fontSize:10, fontWeight:700, color:tab===k?G.light:'rgba(255,255,255,0.3)' }}>{l}</span>
+            </button>
           ))}
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 68 }}>
-        {tab === 'home' && (
-          <div style={{ padding: '18px 20px' }}>
-            <button onClick={onNewInspection} style={{ width: '100%', padding: '16px 20px', background: G.primary, border: 'none', borderRadius: 16, color: 'white', fontSize: 15, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: `0 6px 24px rgba(76,127,5,0.32)`, marginBottom: 22 }}>
-              <div style={{ width: 28, height: 28, borderRadius: 14, background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Ic n="plus" s={16} c="white" />
+      <div style={{ flex:1, overflowY:'auto' }}>
+
+        {/* ══ RECHERCHE ══ */}
+        {tab==='recherche' && (
+          <div style={{ padding:'16px 16px 80px' }}>
+            {/* Mode toggle */}
+            <div style={{ display:'flex', background:'white', borderRadius:12, padding:3, marginBottom:16, boxShadow:'0 1px 4px rgba(0,0,0,0.06)' }}>
+              {[['plaque','Plaque','id'],['categorie','Catégorie','tractor'],['societe','Société','building']].map(([k,l,ic])=>(
+                <button key={k} onClick={()=>setSearchMode(k)} style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', gap:5, padding:'8px 4px', borderRadius:9, border:'none', cursor:'pointer', background:searchMode===k?G.primary:'transparent', transition:'background 0.15s' }}>
+                  <Ic n={ic} s={14} c={searchMode===k?'white':G.muted} />
+                  <span style={{ fontSize:11, fontWeight:700, color:searchMode===k?'white':G.muted }}>{l}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Plaque */}
+            {searchMode==='plaque' && <>
+              <div style={{ background:'white', borderRadius:13, padding:'14px 16px', marginBottom:12, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+                <div style={{ fontSize:12, fontWeight:700, color:G.muted, marginBottom:8 }}>Saisir la plaque d'immatriculation</div>
+                <div style={{ display:'flex', gap:8 }}>
+                  <input
+                    value={plateInput} onChange={e=>setPlateInput(e.target.value.toUpperCase())}
+                    onKeyDown={e=>e.key==='Enter'&&handlePlateLookup()}
+                    placeholder="Ex : DS134ST"
+                    style={{ flex:1, border:`1.5px solid ${G.border}`, borderRadius:10, padding:'11px 14px', fontSize:18, fontWeight:800, letterSpacing:2, outline:'none', color:'#111', fontFamily:'monospace', textTransform:'uppercase' }}
+                  />
+                  <button onClick={handlePlateLookup} style={{ padding:'11px 18px', borderRadius:10, background:G.primary, border:'none', cursor:'pointer' }}>
+                    <Ic n="search" s={18} c="white" />
+                  </button>
+                </div>
+                {plateInput && !VEHICLES[plateInput.trim().toUpperCase().replace(/[\s-]/g,'')] && (
+                  <div style={{ marginTop:8, fontSize:11, color:G.red }}>Plaque non trouvée dans la base</div>
+                )}
               </div>
-              Nouvelle inspection
-            </button>
-            <div style={{ fontSize: 11, fontWeight: 700, color: G.muted, textTransform: 'uppercase', letterSpacing: 1.8, marginBottom: 12 }}>Récents</div>
-            {recents.map(r => (
-              <div key={r.m} onClick={() => r.listing && onOpenListing()} style={{ background: 'white', borderRadius: 14, padding: '13px 15px', marginBottom: 9, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 1px 6px rgba(0,0,0,0.05)', cursor: r.listing ? 'pointer' : 'default' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 12, overflow: 'hidden', flexShrink: 0 }}>
-                  <img src={`${BASE}jd6530-side.png`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.m}</div>
-                  <div style={{ fontSize: 11, color: G.muted, marginTop: 1 }}>{r.ann} · {r.h}</div>
-                </div>
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: scoreColor(r.score) }}>{r.score}<span style={{ fontSize: 10 }}>/100</span></div>
-                  <div style={{ fontSize: 10, color: r.s === 'Publié' ? G.primary : G.gold, fontWeight: 600 }}>{r.s}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {tab === 'parc' && (
-          <div style={{ padding: '16px 16px' }}>
-            {/* Catégorie Tracteurs */}
-            <div style={{ fontSize: 10, fontWeight: 700, color: G.muted, textTransform: 'uppercase', letterSpacing: 1.8, marginBottom: 10, marginLeft: 2 }}>Tracteurs</div>
-            {[
-              { m: 'John Deere 6530 Premium', cat: 'Tracteur', ann: 2008, h: '6 532 h', score: 87, cert: true, pct: 100, annoncé: '49 000 €', img: `${BASE}jd6530-side.png` },
-            ].map(p => (
-              <div key={p.m} onClick={() => onOpenListing()}
-                   style={{ background: 'white', borderRadius: 16, marginBottom: 10,
-                             boxShadow: '0 1px 8px rgba(0,0,0,0.06)', cursor: 'pointer',
-                             border: `1px solid ${G.border}`, overflow: 'hidden' }}>
-                {/* Header card */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 15px' }}>
-                  <div style={{ width: 52, height: 52, borderRadius: 13, overflow: 'hidden', flexShrink: 0 }}>
-                    <img src={p.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 2 }}>{p.m}</div>
-                    <div style={{ fontSize: 11, color: G.muted }}>{p.ann} · {p.h}</div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: 16, fontWeight: 900, color: scoreColor(p.score) }}>{p.score}<span style={{ fontSize: 9, fontWeight: 500, color: G.muted }}>/100</span></div>
-                    <div style={{ fontSize: 9, color: G.muted, fontWeight: 500 }}>Score AgriCertif</div>
-                  </div>
-                </div>
-                {/* Inspection bullet */}
-                <div style={{ borderTop: `1px solid ${G.border}`, padding: '10px 15px',
-                              display: 'flex', alignItems: 'center', gap: 10, background: G.bg }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: 4,
-                                  background: p.cert ? G.primary : G.gold, flexShrink: 0 }} />
-                    <div style={{ fontSize: 11, fontWeight: 700,
-                                  color: p.cert ? G.primary : G.gold }}>
-                      {p.cert ? 'Inspection complète' : 'Inspection en cours'}
+              <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Accès rapide</div>
+              {['DS134ST','GZ969SL','FM459QP'].map(p=>{
+                const veh=VEHICLES[p]; if (!veh) return null;
+                const meta=CAT_META[veh.categorie]||CAT_META.autre;
+                return (
+                  <button key={p} onClick={()=>onOpenVehicle(p)} style={{ width:'100%', background:'white', border:'none', borderRadius:12, padding:'11px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ width:34, height:34, borderRadius:9, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <Ic n={meta.icon} s={18} c={meta.color} />
                     </div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontSize:13, fontWeight:800, color:'#111' }}>{veh.marque} {veh.modele}</div>
+                      <div style={{ fontSize:11, color:G.muted }}>{p} · {meta.label} · {veh.no==='N'?'Neuf':'Occasion'}</div>
+                    </div>
+                    <Ic n="chevR" s={16} c={G.border} />
+                  </button>
+                );
+              })}
+            </>}
+
+            {/* Catégorie */}
+            {searchMode==='categorie' && <>
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:14 }}>
+                {Object.entries(CAT_META).map(([k,m])=>(
+                  <button key={k} onClick={()=>setSelectedCat(selectedCat===k?null:k)} style={{ display:'flex', alignItems:'center', gap:6, padding:'8px 13px', borderRadius:20, border:`1.5px solid ${selectedCat===k?m.color:G.border}`, background:selectedCat===k?m.bg:'white', cursor:'pointer', transition:'all 0.15s' }}>
+                    <Ic n={m.icon} s={14} c={selectedCat===k?m.color:G.muted} />
+                    <span style={{ fontSize:12, fontWeight:700, color:selectedCat===k?m.color:G.muted }}>{m.label}s</span>
+                  </button>
+                ))}
+              </div>
+              {selectedCat && filteredBycat.length===0 && <div style={{ textAlign:'center', color:G.muted, padding:32, fontSize:13 }}>Aucun matériel dans cette catégorie</div>}
+              {filteredBycat.map(veh=>{
+                const meta=CAT_META[veh.categorie]||CAT_META.autre;
+                const annee=veh.dateMEC?parseInt(veh.dateMEC.slice(-4)):null;
+                return (
+                  <button key={veh.plaque} onClick={()=>onOpenVehicle(veh.plaque)} style={{ width:'100%', background:'white', border:'none', borderRadius:12, padding:'11px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                    <div style={{ width:34, height:34, borderRadius:9, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <Ic n={meta.icon} s={18} c={meta.color} />
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontSize:13, fontWeight:800, color:'#111' }}>{veh.marque} {veh.modele}</div>
+                      <div style={{ fontSize:11, color:G.muted }}>{veh.plaque} · {annee||'—'} · {((veh.poidsKg||0)/1000).toFixed(1)} t</div>
+                    </div>
+                    <Ic n="chevR" s={16} c={G.border} />
+                  </button>
+                );
+              })}
+              {!selectedCat && <div style={{ textAlign:'center', color:G.muted, padding:32, fontSize:13 }}>Sélectionnez une catégorie ci-dessus</div>}
+            </>}
+
+            {/* Société */}
+            {searchMode==='societe' && <>
+              <div style={{ background:'white', borderRadius:13, padding:'12px 14px', marginBottom:14, boxShadow:'0 1px 6px rgba(0,0,0,0.05)', display:'flex', gap:8, alignItems:'center' }}>
+                <Ic n="search" s={16} c={G.muted} />
+                <input value={compInput} onChange={e=>setCompInput(e.target.value)} placeholder="Nom, ville ou SIRET…" style={{ flex:1, border:'none', outline:'none', fontSize:14, color:'#111' }} />
+              </div>
+              {filteredCompanies.map(co=>(
+                <button key={co.id} onClick={()=>onOpenCompany(co.id)} style={{ width:'100%', background:'white', border:'none', borderRadius:12, padding:'12px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:'pointer', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ width:38, height:38, borderRadius:10, background:G.border, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                    <Ic n="building" s={20} c={G.muted} />
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: G.dark }}>{p.annoncé}</div>
-                  <div style={{ padding: '3px 9px', borderRadius: 20, fontSize: 9, fontWeight: 700,
-                                background: '#EBF4E1', color: G.primary }}>En ligne</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:13, fontWeight:800, color:'#111' }}>{co.nom}</div>
+                    <div style={{ fontSize:11, color:G.muted }}>{co.ville} · {co.plaques.length} matériel{co.plaques.length>1?'s':''}</div>
+                  </div>
+                  <Ic n="chevR" s={16} c={G.border} />
+                </button>
+              ))}
+            </>}
+          </div>
+        )}
+
+        {/* ══ PROSPECTION ══ */}
+        {tab==='prospection' && (
+          <div style={{ padding:'16px 16px 80px' }}>
+            <div style={{ background:`linear-gradient(135deg, ${G.dark}, ${G.primary})`, borderRadius:16, padding:'16px 18px', marginBottom:14 }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
+                <div>
+                  <div style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:1.5 }}>Zone</div>
+                  <div style={{ fontSize:22, fontWeight:900, color:'white' }}>{PROSPECTION_DATA.departement}</div>
+                  <div style={{ fontSize:11, color:'rgba(255,255,255,0.5)', marginTop:2 }}>{PROSPECTION_DATA.surface}</div>
                 </div>
-                {/* Barre progression inspection */}
-                <div style={{ height: 3, background: '#E5E7EB' }}>
-                  <div style={{ width: `${p.pct}%`, height: '100%', background: p.cert ? G.primary : G.gold,
-                                borderRadius: '0 2px 2px 0', transition: 'width 0.6s ease' }} />
+                <div style={{ textAlign:'right' }}>
+                  <div style={{ fontSize:28, fontWeight:900, color:'white' }}>{PROSPECTION_DATA.totalMachines.toLocaleString('fr')}</div>
+                  <div style={{ fontSize:10, color:'rgba(255,255,255,0.45)', fontWeight:600 }}>machines immat.</div>
                 </div>
               </div>
+              <div style={{ marginTop:12, background:'rgba(255,255,255,0.1)', borderRadius:10, padding:'8px 12px' }}>
+                <span style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.65)' }}>Segment cible : </span>
+                <span style={{ fontSize:11, fontWeight:800, color:'white' }}>{PROSPECTION_DATA.segmentCible} — {PROSPECTION_DATA.partSegment}% du marché</span>
+              </div>
+            </div>
+
+            <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Opportunités détectées</div>
+            {PROSPECTION_DATA.opportunites.map((op,i)=>{
+              const meta=CAT_META[op.type]||CAT_META.autre;
+              return (
+                <div key={i} style={{ background:'white', borderRadius:12, padding:'12px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:12, boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                  <div style={{ width:36, height:36, borderRadius:9, background:meta.bg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                    <Ic n={meta.icon} s={18} c={meta.color} />
+                  </div>
+                  <div style={{ flex:1 }}><div style={{ fontSize:13, fontWeight:700, color:'#111' }}>{op.desc}</div></div>
+                  <div style={{ background:`${meta.color}18`, borderRadius:8, padding:'4px 8px', textAlign:'center' }}>
+                    <div style={{ fontSize:16, fontWeight:900, color:meta.color }}>{op.count}</div>
+                    <div style={{ fontSize:9, fontWeight:600, color:meta.color }}>machines</div>
+                  </div>
+                </div>
+              );
+            })}
+
+            <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8, marginTop:8 }}>Marques — Top 5</div>
+            <div style={{ display:'flex', gap:6, marginBottom:12, overflowX:'auto', paddingBottom:2 }}>
+              {['tracteur','moissonneuse','semoir'].map(k=>(
+                <button key={k} onClick={()=>setProspCat(k)} style={{ flexShrink:0, padding:'6px 12px', borderRadius:20, border:`1.5px solid ${prospCat===k?G.primary:G.border}`, background:prospCat===k?G.primary:'white', cursor:'pointer' }}>
+                  <span style={{ fontSize:11, fontWeight:700, color:prospCat===k?'white':G.muted }}>{CAT_META[k]?.label}s</span>
+                </button>
+              ))}
+            </div>
+            <div style={{ background:'white', borderRadius:13, padding:'13px 14px', marginBottom:14, boxShadow:'0 1px 6px rgba(0,0,0,0.05)' }}>
+              {(PROSPECTION_DATA.topMarques[prospCat]||[]).map((m,i,arr)=>(
+                <div key={i} style={{ marginBottom:i<arr.length-1?9:0 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+                    <span style={{ fontSize:12, fontWeight:700, color:'#111' }}>{m.m}</span>
+                    <span style={{ fontSize:12, fontWeight:800, color:G.primary }}>{m.p}%</span>
+                  </div>
+                  <div style={{ height:6, background:'#F0F0F0', borderRadius:99 }}>
+                    <div style={{ height:'100%', width:`${m.p}%`, background:i===0?G.primary:i===1?G.light:G.border, borderRadius:99, transition:'width 0.5s' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ fontSize:10, fontWeight:700, color:G.muted, textTransform:'uppercase', letterSpacing:1, marginBottom:8 }}>Prospects identifiés</div>
+            {PROSPECTION_DATA.prospects.map((p,i)=>(
+              <button key={i} onClick={()=>p.id&&onOpenCompany(p.id)} style={{ width:'100%', background:'white', border:'none', borderRadius:12, padding:'12px 14px', marginBottom:7, display:'flex', alignItems:'center', gap:10, cursor:p.id?'pointer':'default', textAlign:'left', boxShadow:'0 1px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ width:36, height:36, borderRadius:9, background:p.contacted?'#E6F4EA':'#FEF9E7', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <Ic n="building" s={18} c={p.contacted?G.primary:G.gold} />
+                </div>
+                <div style={{ flex:1 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                    <span style={{ fontSize:13, fontWeight:800, color:'#111' }}>{p.nom}</span>
+                    {p.contacted && <span style={{ fontSize:9, background:G.primary, color:'white', borderRadius:4, padding:'1px 5px', fontWeight:700 }}>CONTACTÉ</span>}
+                  </div>
+                  <div style={{ fontSize:11, color:G.muted, marginTop:1 }}>{p.ville} · {p.parc} matériel{p.parc>1?'s':''} · {p.cible}</div>
+                </div>
+                {p.id && <Ic n="chevR" s={16} c={G.border} />}
+              </button>
             ))}
           </div>
         )}
-        {tab === 'ventes' && <VentesTab onOpenListing={onOpenListing} />}
-        {tab === 'profil' && (
-          <div style={{ padding: '18px 20px' }}>
-            {/* Hero profil */}
-            <div style={{ background: `linear-gradient(135deg,${G.dark} 0%,#1A5C1A 100%)`,
-                          borderRadius: 18, padding: '20px 18px 18px', marginBottom: 16,
-                          boxShadow: '0 6px 24px rgba(16,68,16,0.22)' }}>
-              <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 14 }}>
-                <img src={`${BASE}pacome.jpg`} alt="Pacôme HAZOUARD"
-                     style={{ width: 64, height: 64, borderRadius: 18, objectFit: 'cover',
-                               border: '2.5px solid rgba(107,163,46,0.5)', flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: 'white', letterSpacing: '-0.3px' }}>
-                    Pacôme HAZOUARD
-                  </div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>
-                    Commercial chez AgriCorner
-                  </div>
-                  <div style={{ marginTop: 6, display: 'inline-flex', alignItems: 'center', gap: 5,
-                                background: 'rgba(107,163,46,0.25)', borderRadius: 20, padding: '3px 10px',
-                                border: '1px solid rgba(107,163,46,0.3)' }}>
-                    <div style={{ width: 6, height: 6, borderRadius: 3, background: G.light }} />
-                    <span style={{ fontSize: 10, color: G.light, fontWeight: 700 }}>Inspecteur agréé</span>
-                  </div>
-                </div>
+
+        {/* ══ PROFIL ══ */}
+        {tab==='profil' && (
+          <div style={{ padding:'16px 16px 80px' }}>
+            <div style={{ background:`linear-gradient(135deg, ${G.dark}, ${G.primary})`, borderRadius:16, padding:'20px 18px', marginBottom:16, display:'flex', gap:14, alignItems:'center' }}>
+              <div style={{ width:54, height:54, borderRadius:27, background:'rgba(255,255,255,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <Ic n="user" s={28} c="rgba(255,255,255,0.8)" />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                {[
-                  { icon: 'pin',   v: 'Aube (10)' },
-                  { icon: 'phone', v: '07 62 10 41 8' },
-                ].map(({ icon, v }) => (
-                  <div key={v} style={{ background: 'rgba(255,255,255,0.07)', borderRadius: 10,
-                                        padding: '8px 12px', display: 'flex', gap: 8, alignItems: 'center',
-                                        border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <Ic n={icon} s={13} c={G.light} />
-                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>{v}</span>
-                  </div>
-                ))}
+              <div>
+                <div style={{ fontSize:18, fontWeight:900, color:'white' }}>Pacôme HAZOUARD</div>
+                <div style={{ fontSize:12, color:'rgba(255,255,255,0.55)', marginTop:2 }}>Commercial agricole</div>
+                <div style={{ display:'inline-flex', alignItems:'center', gap:4, background:'rgba(255,255,255,0.1)', borderRadius:6, padding:'3px 8px', marginTop:6 }}>
+                  <Ic n="pin" s={11} c={G.light} />
+                  <span style={{ fontSize:10, fontWeight:600, color:G.light }}>Aube (10)</span>
+                </div>
               </div>
             </div>
             {[
-              ['Société',     'AgriCorner'],
-              ['Département', 'Aube (10)'],
-              ['Téléphone',   '07 62 10 41 8'],
-              ['Email',       'pacome.hazouard@agricorner.com'],
-            ].map(([l, v]) => (
-              <div key={l} style={{ background: 'white', borderRadius: 13, padding: '13px 16px', marginBottom: 9, display: 'flex', alignItems: 'center', gap: 12, boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 10, color: G.muted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.8 }}>{l}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v}</div>
+              ['Société','AgriCorner'],
+              ['Département','Aube (10)'],
+              ['Téléphone','07 62 10 41 8'],
+              ['Email','pacome.hazouard@agricorner.com'],
+            ].map(([l,v])=>(
+              <div key={l} style={{ background:'white', borderRadius:13, padding:'13px 16px', marginBottom:9, display:'flex', alignItems:'center', gap:12, boxShadow:'0 1px 6px rgba(0,0,0,0.04)' }}>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:10, color:G.muted, fontWeight:600, textTransform:'uppercase', letterSpacing:0.8 }}>{l}</div>
+                  <div style={{ fontSize:13, fontWeight:600, color:'#1A1A1A', marginTop:2 }}>{v}</div>
                 </div>
-                <Ic n="chevR" s={16} c={G.border} />
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 64, background: 'white', borderTop: `1px solid ${G.border}`, display: 'flex', alignItems: 'center', paddingBottom: 6 }}>
-        {[
-          { id: 'new',    label: 'Inspecter', icon: 'plus',  special: true },
-          { id: 'parc',   label: 'Mon parc',  icon: 'tractor' },
-          { id: 'ventes', label: 'Mes ventes', icon: 'tag' },
-          { id: 'profil', label: 'Profil',    icon: 'user' },
-        ].map(t => (
-          <button key={t.id} onClick={() => t.special ? onNewInspection() : setTab(t.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0' }}>
-            {t.special ? (
-              <div style={{ width: 44, height: 44, borderRadius: 22, background: G.primary, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: -20, boxShadow: `0 4px 14px rgba(76,127,5,0.4)` }}>
-                <Ic n="plus" s={20} c="white" />
-              </div>
-            ) : (
-              <>
-                <Ic n={t.icon} s={20} c={tab === t.id ? G.primary : '#C0C0C0'} />
-                <span style={{ fontSize: 10, fontWeight: 600, color: tab === t.id ? G.primary : '#C0C0C0' }}>{t.label}</span>
-              </>
-            )}
-          </button>
-        ))}
+      {/* Bouton flottant */}
+      <div style={{ position:'absolute', bottom:0, left:0, right:0, height:64, background:'white', borderTop:`1px solid ${G.border}`, display:'flex', alignItems:'center', justifyContent:'center', paddingBottom:6 }}>
+        <button onClick={onNewInspection} style={{ display:'flex', alignItems:'center', gap:8, padding:'10px 24px', borderRadius:24, background:G.primary, border:'none', cursor:'pointer', boxShadow:'0 4px 14px rgba(76,127,5,0.35)' }}>
+          <Ic n="plus" s={18} c="white" />
+          <span style={{ fontSize:13, fontWeight:800, color:'white' }}>Nouvelle inspection</span>
+        </button>
       </div>
     </div>
   );
 }
-
-/* ── Scale hook ── */
 
 /* ══════════════════════════════════
    APP ROOT
 ══════════════════════════════════ */
 export default function App() {
   const [screen,     setScreen]     = useState('home');
-  const [dbs,        setDbs]        = useState({ tracteur: {}, moissonneuse: {}, telescopique: {} });
+  const [dbs,        setDbs]        = useState({ tracteur:{}, moissonneuse:{}, telescopique:{} });
   const [clientInfo, setClientInfo] = useState(null);
   const [mInfo,      setMInfo]      = useState(null);
   const [inspData,   setInspData]   = useState(null);
   const [visData,    setVisData]    = useState(null);
-  const [prevScreen, setPrevScreen] = useState('home');
-  const goListing = () => { setPrevScreen(screen); setScreen('listing'); };
+  const [selPlaque,  setSelPlaque]  = useState(null);
+  const [selCompany, setSelCompany] = useState(null);
 
-  useEffect(() => {
-    fetch('/tracteurs-db.json').then(r=>r.json()).then(d=>setDbs(p=>({...p,tracteur:d}))).catch(()=>{});
-    fetch('/moissonneuses-db.json').then(r=>r.json()).then(d=>setDbs(p=>({...p,moissonneuse:d}))).catch(()=>{});
-    fetch('/telescopiques-db.json').then(r=>r.json()).then(d=>setDbs(p=>({...p,telescopique:d}))).catch(()=>{});
-  }, []);
+  useEffect(()=>{
+    fetch(`${BASE}tracteurs-db.json`).then(r=>r.json()).then(d=>setDbs(p=>({...p,tracteur:d}))).catch(()=>{});
+    fetch(`${BASE}moissonneuses-db.json`).then(r=>r.json()).then(d=>setDbs(p=>({...p,moissonneuse:d}))).catch(()=>{});
+    fetch(`${BASE}telescopiques-db.json`).then(r=>r.json()).then(d=>setDbs(p=>({...p,telescopique:d}))).catch(()=>{});
+  },[]);
 
   const go = s => setScreen(s);
 
+  const launchInspectionFromVehicle = (veh) => {
+    const catMap = { tracteur:'tracteur', moissonneuse:'moissonneuse', semoir:'autre', dechaumeur:'autre', presse:'autre', autre:'autre' };
+    setMInfo({ category:catMap[veh.categorie]||'autre', brand:veh.marque, model:veh.modele, year:veh.dateMEC?veh.dateMEC.slice(-4):'', hours:'', plate:veh.plaque });
+    const co=COMPANIES.find(c=>c.id===veh.societeId);
+    if (co) setClientInfo({ firstName:co.nom, lastName:'', address:`${co.adresse}, ${co.cp} ${co.ville}`, region:null });
+    go('inspection');
+  };
+
   return (
-    <div className="screen-enter" key={screen} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', position: 'relative' }}>
-      {screen === 'listing'    && <ListingScreen    onBack={() => setScreen(prevScreen)} />}
-      {screen === 'home'       && <HomeScreen       onNewInspection={() => go('client')} onOpenListing={goListing} />}
-      {screen === 'client'     && <ClientScreen     onBack={() => go('home')}       onNext={d => { setClientInfo(d); go('id'); }} />}
-      {screen === 'id'         && <IdScreen         dbs={dbs}                        onBack={() => go('client')} onNext={d => { setMInfo(d); go('inspection'); }} />}
-      {screen === 'inspection' && <InspectionScreen machineInfo={mInfo}              onBack={() => go('id')}     onNext={d => { setInspData(d); go('visite'); }} />}
-      {screen === 'visite'     && <VisiteScreen     machineInfo={mInfo}              onBack={() => go('inspection')} onNext={d => { setVisData(d); go('annonce'); }} />}
-      {screen === 'annonce'    && <AnnonceScreen    machineInfo={mInfo} clientInfo={clientInfo} inspection={inspData} visite={visData} onBack={() => go('visite')} onHome={() => go('home')} />}
+    <div className="screen-enter" key={screen} style={{ display:'flex', flexDirection:'column', flex:1, overflow:'hidden', position:'relative' }}>
+      {screen==='home'       && <SearchScreen    onOpenVehicle={p=>{setSelPlaque(p);go('vehicle');}} onOpenCompany={id=>{setSelCompany(id);go('company');}} onNewInspection={()=>go('client')} />}
+      {screen==='vehicle'    && <VehicleScreen   plaque={selPlaque} onBack={()=>go('home')} onLaunchInspection={launchInspectionFromVehicle} />}
+      {screen==='company'    && <CompanyScreen   companyId={selCompany} onBack={()=>go('home')} onOpenVehicle={p=>{setSelPlaque(p);go('vehicle');}} />}
+      {screen==='client'     && <ClientScreen    onBack={()=>go('home')} onNext={d=>{setClientInfo(d);go('id');}} />}
+      {screen==='id'         && <IdScreen        dbs={dbs} onBack={()=>go('client')} onNext={d=>{setMInfo(d);go('inspection');}} />}
+      {screen==='inspection' && <InspectionScreen machineInfo={mInfo} onBack={()=>go(mInfo?.plate?'vehicle':'id')} onNext={d=>{setInspData(d);go('visite');}} />}
+      {screen==='visite'     && <VisiteScreen    machineInfo={mInfo} onBack={()=>go('inspection')} onNext={d=>{setVisData(d);go('annonce');}} />}
+      {screen==='annonce'    && <AnnonceScreen   machineInfo={mInfo} clientInfo={clientInfo} inspection={inspData} visite={visData} onBack={()=>go('visite')} onHome={()=>go('home')} />}
     </div>
   );
 }
