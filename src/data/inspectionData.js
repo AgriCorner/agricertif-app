@@ -479,6 +479,10 @@ export const INSPECTION_BY_TYPE = {
   semoir_mono:    INSPECTION_SEMOIR,
   semoir_pneumatique: INSPECTION_SEMOIR,
   semoir_direct:  INSPECTION_SEMOIR,
+  semoir:         INSPECTION_SEMOIR,
+  presse:         INSPECTION_PRESSE,
+  fenaison:       INSPECTION_SOL,
+  travail_sol:    INSPECTION_SOL,
 };
 
 export function getInspectionSections(subcategoryId) {
