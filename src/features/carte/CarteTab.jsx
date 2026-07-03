@@ -45,6 +45,8 @@ export default function CarteTab({ onOpenFiche }) {
   const [selFarm, setSelFarm] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const movingRef = useRef(false);
+  const [mapIdleTick, setMapIdleTick] = useState(0);
 
   /* Init carte */
   useEffect(() => {
@@ -57,7 +59,15 @@ export default function CarteTab({ onOpenFiche }) {
     L.control.attribution({ prefix: false }).addTo(map);
     mapRef.current = map;
     if (lastSearch.commune) map.setView([lastSearch.commune.lat, lastSearch.commune.lng], 13);
-    return () => { map.remove(); mapRef.current = null; };
+    /* les marqueurs ne doivent pas être posés pendant une animation flyTo
+       (origine de pixels périmée) — on note l'état et on redessine à l'arrêt */
+    map.on('movestart zoomstart', () => { movingRef.current = true; });
+    map.on('moveend zoomend', () => { movingRef.current = false; setMapIdleTick(t => t + 1); });
+    /* le conteneur peut être mesuré trop tôt (animation d'entrée d'écran, clavier mobile) */
+    const ro = new ResizeObserver(() => map.invalidateSize());
+    ro.observe(containerRef.current);
+    const t = setTimeout(() => map.invalidateSize(), 350);
+    return () => { clearTimeout(t); ro.disconnect(); map.remove(); mapRef.current = null; };
   }, []);
 
   /* Statuts des fiches (colorent les marqueurs) — rafraîchis à chaque montage */
@@ -93,10 +103,10 @@ export default function CarteTab({ onOpenFiche }) {
     return farms.filter(f => active.some(fam => fam.match(f.naf)));
   }, [farms, familles]);
 
-  /* Marqueurs */
+  /* Marqueurs — redessinés quand les données changent ou que la carte s'immobilise */
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || movingRef.current) return;
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
     const seen = new Map(); // "lat,lng" → nb de marqueurs déjà posés là
@@ -115,7 +125,7 @@ export default function CarteTab({ onOpenFiche }) {
       m.on('click', () => setSelFarm(f));
       markersRef.current.push(m);
     });
-  }, [visibleFarms, statuts]);
+  }, [visibleFarms, statuts, mapIdleTick]);
 
   const pickCommune = (c) => {
     setCommune(c);
